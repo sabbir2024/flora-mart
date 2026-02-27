@@ -5,7 +5,7 @@ import logo from "../../public/flora-mart-logo.jpg";
 export default function Logo() {
     return (
         <Link href={'/'}>
-            <Image src={logo} height={35} width={35} alt="Brand logo" className="rounded-full ring-1" />
+            <Image src={logo} height={35} width={35} alt="Brand logo" className="rounded-full ring-1 ring-blue-500" />
         </Link>
     );
 }
