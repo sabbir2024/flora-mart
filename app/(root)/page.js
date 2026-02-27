@@ -1,9 +1,10 @@
 import Container from "../components/Container";
+import Banner from "./conponents/banner/Banner";
 
 export default function page() {
     return (
         <Container>
-            <h1> page </h1>
+            <Banner />
         </Container>
     );
 }
