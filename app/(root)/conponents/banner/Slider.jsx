@@ -31,7 +31,7 @@ export default function Slider({ data }) {
                 navigation={true}
                 modules={[Autoplay, Pagination, Navigation]}
                 onAutoplayTimeLeft={onAutoplayTimeLeft}
-                className="mySwiper w-full h-[140px]  lg:h-[438.656pxpx]"
+                className="mySwiper w-full h-52  md:h-96"
             >
                 {
                     data?.map((item, index) => {
