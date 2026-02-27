@@ -2,7 +2,7 @@ export default function Card({ item }) {
     return (
         <div className="card card-sm bg-base-200 mx-w-60 shadow">
 
-            <figure className="hover-gallery">
+            <figure className="">
                 <img src={item?.product_url} />
             </figure>
             <div className="card-body">
