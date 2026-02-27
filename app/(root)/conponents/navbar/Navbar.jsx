@@ -2,9 +2,9 @@
 
 import Logo from "../../../components/Logo";
 import Container from "../../../components/Container";
-import { CgFacebook, CgMail } from "react-icons/cg";
+import Mobile from "./Mobile";
+import TopBar from "./TopBar";
 import { useState, useEffect } from "react";
-import { FaPhone } from "react-icons/fa";
 
 export default function Navbar() {
     const [showCall, setShowCall] = useState(true);
@@ -33,17 +33,7 @@ export default function Navbar() {
     return (
         <Container>
             {/* টপ বার - স্ক্রোল করলে হাইড হবে */}
-            <div
-                className={`bg-blue-400 w-full h-auto p-2 flex justify-between transition-transform duration-300 ${showCall ? 'translate-y-0' : '-translate-y-full'
-                    }`}
-            >
-                <h1 className="font-bold flex gap-1"> <FaPhone />
-                    +880 1628-507832</h1>
-                <div className="flex justify-between gap-4">
-                    <CgFacebook className="w-5 h-5 rounded-full bg-amber-50 hover:bg-blue-600 hover:text-white transition-colors cursor-pointer" />
-                    <CgMail className="w-5 h-5 rounded-full bg-amber-50 hover:bg-blue-600 hover:text-white transition-colors cursor-pointer" />
-                </div>
-            </div>
+            <TopBar showCall={showCall} />
 
             {/* মেইন নেভিগেশন - LG তে স্ট্যাটিক */}
             <div className="hidden lg:block sticky top-0 z-50 bg-white shadow-md">
@@ -134,47 +124,7 @@ export default function Navbar() {
             </div>
 
             {/* মোবাইল ডক - শুধু মোবাইলে দেখাবে */}
-            <div className="flex lg:hidden">
-                <div className="dock dock-xs bg-white shadow-lg">
-                    <button className="text-gray-600 hover:text-blue-600">
-                        <svg className="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                            <g fill="currentColor" strokeLinejoin="miter" strokeLinecap="butt">
-                                <polyline points="1 11 12 2 23 11" fill="none" stroke="currentColor" strokeMiterlimit="10" strokeWidth="2"></polyline>
-                                <path d="m5,13v7c0,1.105.895,2,2,2h10c1.105,0,2-.895,2-2v-7" fill="none" stroke="currentColor" strokeLinecap="square" strokeMiterlimit="10" strokeWidth="2"></path>
-                                <line x1="12" y1="22" x2="12" y2="18" fill="none" stroke="currentColor" strokeLinecap="square" strokeMiterlimit="10" strokeWidth="2"></line>
-                            </g>
-                        </svg>
-                        <span className="dock-label text-xs">Home</span>
-                    </button>
-
-                    <button className="dock-active text-blue-600">
-                        <svg className="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                            <g fill="currentColor" strokeLinejoin="miter" strokeLinecap="butt">
-                                <polyline points="3 14 9 14 9 17 15 17 15 14 21 14" fill="none" stroke="currentColor" strokeMiterlimit="10" strokeWidth="2"></polyline>
-                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" fill="none" stroke="currentColor" strokeLinecap="square" strokeMiterlimit="10" strokeWidth="2"></rect>
-                            </g>
-                        </svg>
-                        <span className="dock-label text-xs">Products</span>
-                    </button>
-
-                    <button className="text-gray-600 hover:text-blue-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                        <span className="dock-label text-xs">Card</span>
-                    </button>
-
-                    <button className="text-gray-600 hover:text-blue-600">
-                        <svg className="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                            <g fill="currentColor">
-                                <circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" strokeLinecap="square" strokeMiterlimit="10" strokeWidth="2"></circle>
-                                <path d="M5.3 18c-.8 0-1.4-.7-1.2-1.5C5 13.5 8.2 11 12 11s7 2.5 7.9 5.5c.2.8-.4 1.5-1.2 1.5H5.3z" fill="none" stroke="currentColor" strokeLinecap="square" strokeMiterlimit="10" strokeWidth="2"></path>
-                            </g>
-                        </svg>
-                        <span className="dock-label text-xs">Profile</span>
-                    </button>
-                </div>
-            </div>
+            <Mobile />
         </Container>
     );
 } 
