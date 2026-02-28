@@ -3,11 +3,11 @@ import Card from "../../../components/Card";
 
 export default async function MostPopulor() {
 
-    const res = await fetch('http://localhost:3000/api/v1/products', {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_VERCEL_URL}/api/v1/products`, {
         cache: 'no-store'
     })
     const products = await res?.json()
-    c
+
     return (
         <div>
             <div className="h-full mt-2 p-2 bg-info text-2xl font-bold flex justify-between">
