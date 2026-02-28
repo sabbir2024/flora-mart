@@ -39,7 +39,7 @@ export default function MostPopulor() {
     return (
         <div>
             <h1 className="h-full mt-2 p-2 bg-info text-2xl font-bold"> MostPopulor </h1>
-            <div className="gird grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4">
                 {products?.map(item => <Card key={item?._id} item={item} />)}
             </div>
         </div>
