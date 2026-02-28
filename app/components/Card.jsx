@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Card({ item }) {
     return (
         <div className="card card-sm bg-base-200 mx-w-60 shadow">
@@ -13,7 +15,7 @@ export default function Card({ item }) {
                         <span className="text-red-700 flex line-through">{item?.price?.original_price} ৳ </span>
                     </span>
                 </h2>
-                <div className="border-2 border-info text-center text-xl font-bold rounded-2xl">Order Now</div>
+                <Link href={`/shop/product/${item?._id}`} className="border-2 border-info text-center text-xl font-bold rounded-2xl">Order Now</Link>
             </div>
         </div>
     );
