@@ -3,7 +3,7 @@ import Card from "../../../components/Card";
 
 export default async function MostPopulor() {
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_VERCEL_URL}/api/v1/products`, {
+    const res = await fetch('/api/v1/products', {
         cache: 'no-store'
     })
     const products = await res?.json()
