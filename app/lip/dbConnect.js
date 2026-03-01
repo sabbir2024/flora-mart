@@ -8,7 +8,7 @@ export const collectionlist = {
 };
 
 
-const uri = "mongodb://localhost:27017";
+const uri = process.env.NEXT_PUBLIC_MONGODB_URI;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {

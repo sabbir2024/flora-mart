@@ -1,0 +1,1 @@
+export const mainUrl = `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/v1`

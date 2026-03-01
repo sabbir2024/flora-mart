@@ -1,10 +1,13 @@
 import { BiArrowFromLeft, BiArrowFromRight } from "react-icons/bi";
 import Card from "../../../components/Card";
+import { mainUrl } from "../../../components/url";
+import { headers } from "next/headers";
 
 export default async function MostPopulor() {
+    ;
 
-    const res = await fetch('/api/v1/products', {
-        cache: 'no-store'
+    const res = await fetch(`${mainUrl}/products`, {
+        headers: new Headers(await headers())
     })
     const products = await res?.json()
 
