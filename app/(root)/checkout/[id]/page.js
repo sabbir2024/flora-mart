@@ -7,9 +7,10 @@ export default async function page({ params }) {
     const id = paramsId?.id
     const product = await dbConnect(collectionlist.productsCollection).findOne({ _id: new ObjectId(id) })
 
+    const plainProduct = JSON.parse(JSON.stringify(product));
     return (
         <div>
-            <Checkout product={product} />
+            <Checkout product={plainProduct} />
         </div>
     );
 }

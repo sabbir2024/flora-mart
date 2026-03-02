@@ -3,8 +3,11 @@
 
 import { useState } from 'react';
 import Swal from 'sweetalert2';
+import { apiUrl } from '../../../../components/url';
 
 export default function Checkout({ product }) {
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -63,17 +66,121 @@ export default function Checkout({ product }) {
         }
     };
 
-    const handleSubmit = (e) => {
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Order submitted:', formData);
-        // এখানে আপনার API কল করুন
-        Swal.fire({
-            position: "center",
-            icon: "success",
-            title: "অর্ডার সফলভাবে সম্পন্ন হয়েছে!",
-            showConfirmButton: false,
-            timer: 1500
-        });
+        setIsSubmitting(true);
+
+        try {
+            const orderData = {
+                customer_name: formData.name,
+                customer_email: formData.email,
+                customer_phone: formData.phone,
+                delivery_address: formData.address,
+                division: formData.division,
+                district: formData.district,
+                area: formData.area,
+                postal_code: formData.postalCode,
+                product_id: formData.productId,
+                product_name: product?.product_name || formData.productName,
+                quantity: formData.quantity,
+                product_price: product?.price?.current_price || formData.productPrice,
+                total_price: totalPrice,
+                delivery_charge: deliveryCharge,
+                payment_method: formData.paymentMethod,
+                order_status: 'pending',
+                order_date: new Date().toISOString()
+            };
+
+            // ভ্যালিডেশন চেক
+            if (!orderData.customer_name || !orderData.customer_phone || !orderData.delivery_address) {
+                Swal.fire({
+                    position: "center",
+                    icon: "warning",
+                    title: "তথ্য অসম্পূর্ণ!",
+                    text: "দয়া করে সকল প্রয়োজনীয় তথ্য দিন।",
+                    showConfirmButton: true,
+                    confirmButtonText: "ঠিক আছে"
+                });
+                setIsSubmitting(false);
+                return;
+            }
+
+
+            const response = await fetch(`${apiUrl}/checkout`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(orderData)
+            });
+
+            const result = await response.json();
+            console.log('Server response:', result);
+
+            if (response.ok) {
+                // সফল অর্ডার
+                await Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "অর্ডার সফলভাবে সম্পন্ন হয়েছে!",
+                    html: `
+                    <div class="text-left">
+                        <p>অর্ডার আইডি: <strong>${result?.order_id || 'N/A'}</strong></p>
+                        <p>মোট মূল্য: <strong>৳${totalPrice}</strong></p>
+                        <p>পেমেন্ট মেথড: <strong>${formData.paymentMethod === 'cod' ? 'ক্যাশ অন ডেলিভারি' : formData.paymentMethod}</strong></p>
+                    </div>
+                `,
+                    showConfirmButton: true,
+                    confirmButtonText: "ঠিক আছে",
+                    confirmButtonColor: "#3085d6"
+                });
+
+                // অর্ডার সফল হলে ফর্ম রিসেট
+                setFormData({
+                    ...formData,
+                    name: '',
+                    email: '',
+                    phone: '',
+                    address: '',
+                    division: '',
+                    district: '',
+                    area: '',
+                    postalCode: '',
+                    quantity: 1,
+                    paymentMethod: 'cod'
+                });
+
+                // রিডাইরেক্ট বা মডাল বন্ধ করুন
+                // router.push('/order-success');
+                // setIsModalOpen(false);
+
+            } else {
+                // এরর হ্যান্ডলিং
+                Swal.fire({
+                    position: "center",
+                    icon: "error",
+                    title: "অর্ডার সম্পন্ন হয়নি!",
+                    text: result?.message || "দয়া করে আবার চেষ্টা করুন",
+                    showConfirmButton: true,
+                    confirmButtonText: "ঠিক আছে"
+                });
+            }
+        } catch (error) {
+            console.error('Order submission error:', error);
+
+            // নেটওয়ার্ক বা অন্যান্য এরর
+            Swal.fire({
+                position: "center",
+                icon: "error",
+                title: "সমস্যা হয়েছে!",
+                text: error?.message || "নেটওয়ার্ক সমস্যা। দয়া করে আবার চেষ্টা করুন।",
+                showConfirmButton: true,
+                confirmButtonText: "ঠিক আছে"
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     // ডেলিভারি চার্জ ক্যালকুলেট (শহর অনুযায়ী)
@@ -83,7 +190,7 @@ export default function Checkout({ product }) {
     };
 
     const deliveryCharge = getDeliveryCharge();
-    const subtotal = formData.quantity * formData.productPrice;
+    const subtotal = formData.quantity * product?.price?.current_price;
     const totalPrice = subtotal + deliveryCharge;
 
     // বাংলাদেশের বিভাগ ও জেলার ডাটা
