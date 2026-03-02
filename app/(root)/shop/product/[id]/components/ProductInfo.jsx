@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import AddtoCardForm from './AddtoCardForm';
+import Link from 'next/link';
 
 export default function ProductInfoTabs({ product }) {
     const [activeTab, setActiveTab] = useState('description');
@@ -72,7 +72,7 @@ export default function ProductInfoTabs({ product }) {
                         </ul>
                     )}
                 </div>
-                <AddtoCardForm />
+                <Link href={`/checkout/${data?._id}`}> <button className="btn btn-active btn-info">এখনই কিনুন</button></Link>
             </div>
 
         </div>
