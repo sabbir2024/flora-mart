@@ -130,10 +130,10 @@ export default function Navbar() {
                             </li>
                             <li>
                                 <Link
-                                    href="/about"
-                                    className={getLinkClass('/about')}
+                                    href="/my-card"
+                                    className={getLinkClass('/my-card')}
                                 >
-                                    About
+                                    Card
                                 </Link>
                             </li>
                             <li>
@@ -178,7 +178,7 @@ export default function Navbar() {
                                     <span className="text-info">Subtotal: $999</span>
                                     <div className="card-actions">
                                         <Link
-                                            href="/cart"
+                                            href="/my-cart"
                                             className="btn btn-primary btn-block bg-blue-500 hover:bg-blue-600 border-none"
                                         >
                                             View cart

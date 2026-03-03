@@ -15,8 +15,6 @@ export default function SimpleHoverImage({
     const containerRef = useRef(null);
     const imageRef = useRef(null);
 
-    console.log('dddd', src);
-
     // মাউস মুভমেন্ট ট্র্যাক করা
     const handleMouseMove = (e) => {
         if (!containerRef.current) return;

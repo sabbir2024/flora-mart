@@ -15,7 +15,7 @@ export const POST = async (req) => {
             );
         }
 
-        const db = await dbConnect(collectionlist.checkoutCollection);
+        const db = await dbConnect(collectionlist.bookingsCollection);
         const result = await db.insertOne({
             ...data,
             createdAt: new Date(),
@@ -33,60 +33,6 @@ export const POST = async (req) => {
 
     } catch (error) {
         console.error("Checkout API Error:", error);
-        return NextResponse.json(
-            { success: false, message: error.message },
-            { status: 500 }
-        );
-    }
-};
-
-// GET মেথড - সব অর্ডার দেখতে
-export const GET = async (req) => {
-    try {
-        const db = await dbConnect();
-        const orders = await db.collection(collectionlist.checkoutCollection)
-            .find({})
-            .sort({ createdAt: -1 })
-            .toArray();
-
-        return NextResponse.json(
-            { success: true, data: orders },
-            { status: 200 }
-        );
-
-    } catch (error) {
-        console.error("Get Orders Error:", error);
-        return NextResponse.json(
-            { success: false, message: error.message },
-            { status: 500 }
-        );
-    }
-};
-
-// DELETE মেথড - অর্ডার ডিলিট
-export const DELETE = async (req) => {
-    try {
-        const { searchParams } = new URL(req.url);
-        const id = searchParams.get('id');
-
-        if (!id) {
-            return NextResponse.json(
-                { success: false, message: "Order ID required" },
-                { status: 400 }
-            );
-        }
-
-        const db = await dbConnect();
-        const result = await db.collection(collectionlist.checkoutCollection)
-            .deleteOne({ _id: new ObjectId(id) });
-
-        return NextResponse.json(
-            { success: true, message: "Order deleted", data: result },
-            { status: 200 }
-        );
-
-    } catch (error) {
-        console.error("Delete Order Error:", error);
         return NextResponse.json(
             { success: false, message: error.message },
             { status: 500 }

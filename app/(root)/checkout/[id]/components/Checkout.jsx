@@ -4,8 +4,11 @@
 import { useState } from 'react';
 import Swal from 'sweetalert2';
 import { apiUrl } from '../../../../components/url';
+import { useRouter } from 'next/navigation'
+
 
 export default function Checkout({ product }) {
+    const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [formData, setFormData] = useState({
@@ -116,7 +119,6 @@ export default function Checkout({ product }) {
             });
 
             const result = await response.json();
-            console.log('Server response:', result);
 
             if (response.ok) {
                 // সফল অর্ডার
@@ -152,7 +154,7 @@ export default function Checkout({ product }) {
                 });
 
                 // রিডাইরেক্ট বা মডাল বন্ধ করুন
-                // router.push('/order-success');
+                router.push('/my-card');
                 // setIsModalOpen(false);
 
             } else {
@@ -551,18 +553,21 @@ export default function Checkout({ product }) {
                     </div>
                 </div>
 
-                {/* সাবমিট বাটন */}
-                <div className="mt-6">
-                    <button
-                        type="submit"
-                        className="btn btn-primary btn-block text-lg py-3"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        অর্ডার কনফার্ম করুন
-                    </button>
-                </div>
+                {
+                    isSubmitting ? <p>Please</p> :
+
+                        <div className="mt-6">
+                            <button
+                                type="submit"
+                                className="btn btn-primary btn-block text-lg py-3"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                অর্ডার কনফার্ম করুন
+                            </button>
+                        </div>
+                }
             </form>
         </div>
     );
