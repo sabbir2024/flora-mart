@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
 import dbConnect, { collectionlist } from "../../../lip/dbConnect";
+import { ObjectId } from "mongodb";
 
 
 export const GET = async (req) => {
     try {
         const { searchParams } = new URL(req.url);
-        const email = await searchParams.get("email")
-        if (!email) {
+        const productId = await searchParams.get("productId")
+        console.log('product_id=>', productId)
+        if (!productId) {
             return NextResponse.json(
                 { success: false, message: 'Unauthorized User' },
                 { status: 401 }
@@ -14,7 +16,7 @@ export const GET = async (req) => {
         }
 
         const collection = await dbConnect(collectionlist.bookingsCollection)
-        const orders = await collection.find({ customer_email: email }).toArray();
+        const orders = await collection.find({ _id: new ObjectId(productId) }).toArray();
 
         return NextResponse.json(
             { success: true, data: orders },

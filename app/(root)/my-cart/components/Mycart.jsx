@@ -9,7 +9,9 @@ export default function Mycard({ bookings }) {
     const router = useRouter();
     const [selectedBookings, setSelectedBookings] = useState([]);
     const [sortBy, setSortBy] = useState('newest');
-    const [viewMode, setViewMode] = useState('table'); // 'table' বা 'card'
+    const [viewMode, setViewMode] = useState('table');
+
+
 
     // সব সিলেক্ট/ডিসিলেক্ট
     const toggleSelectAll = () => {
@@ -332,7 +334,7 @@ export default function Mycard({ bookings }) {
 
             {/* টেবিল ভিউ (ডেস্কটপ + মোবাইলের জন্য) */}
             <div className={`${viewMode === 'table' ? 'block' : 'hidden md:block'} overflow-x-auto bg-base-100 rounded-xl shadow-lg`}>
-                <div className="min-w-[1000px] md:min-w-full">
+                <div className="min-w-250 md:min-w-full">
                     <table className="table table-zebra table-xs md:table-md">
                         {/* হেড */}
                         <thead className="bg-base-200">

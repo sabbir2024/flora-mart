@@ -3,13 +3,16 @@
 
 import { useState } from 'react';
 import Swal from 'sweetalert2';
+import Cookies from 'js-cookie';
 import { apiUrl } from '../../../../components/url';
 import { useRouter } from 'next/navigation'
+
 
 
 export default function Checkout({ product }) {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
+
 
     const [formData, setFormData] = useState({
         name: '',
@@ -18,7 +21,6 @@ export default function Checkout({ product }) {
         address: '',
         division: '',
         district: '',
-        postalCode: '',
         quantity: 1,
         paymentMethod: 'cod',
         productName: product?.product_name || 'Waterproof and Sweat Proof Hair Dye Color',
@@ -83,8 +85,7 @@ export default function Checkout({ product }) {
                 division: formData.division,
                 district: formData.district,
                 area: formData.area,
-                postal_code: formData.postalCode,
-                product_id: formData.productId,
+                product_id: product?._id,
                 product_name: product?.product_name || formData.productName,
                 quantity: formData.quantity,
                 product_price: product?.price?.current_price || formData.productPrice,
@@ -121,7 +122,14 @@ export default function Checkout({ product }) {
             const result = await response.json();
 
             if (response.ok) {
-                // সফল অর্ডার
+
+                Cookies.set("product_id", result.order_id, {
+                    expires: 30,
+                    path: '/',
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: 'lax'
+                });
+
                 await Swal.fire({
                     position: "center",
                     icon: "success",
@@ -148,13 +156,12 @@ export default function Checkout({ product }) {
                     division: '',
                     district: '',
                     area: '',
-                    postalCode: '',
                     quantity: 1,
                     paymentMethod: 'cod'
                 });
 
                 // রিডাইরেক্ট বা মডাল বন্ধ করুন
-                router.push('/my-card');
+                router.push('/my-cart');
                 // setIsModalOpen(false);
 
             } else {
@@ -169,7 +176,6 @@ export default function Checkout({ product }) {
                 });
             }
         } catch (error) {
-            console.error('Order submission error:', error);
 
             // নেটওয়ার্ক বা অন্যান্য এরর
             Swal.fire({
@@ -327,66 +333,12 @@ export default function Checkout({ product }) {
     };
 
     return (
-        <div className="max-w-2xl mx-auto p-6 bg-base-100 rounded-2xl shadow-xl">
+        <div className="w-full mx-auto p-6 bg-base-100 rounded-2xl shadow-xl">
             <h3 className="font-bold text-2xl mb-6 text-center border-b pb-4">
                 অর্ডার কনফার্মেশন
             </h3>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-                {/* প্রোডাক্ট ইনফো */}
-                <div className="bg-base-200 p-5 rounded-xl">
-                    <h4 className="font-semibold mb-3 text-lg">প্রোডাক্টের বিবরণ</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="md:col-span-2">
-                            <label className="label-text font-medium">প্রোডাক্টের নাম</label>
-                            <input
-                                type="text"
-                                value={formData.productName}
-                                className="input input-bordered w-full bg-base-100/50 mt-1"
-                                readOnly
-                            />
-                        </div>
-                        <div>
-                            <label className="label-text font-medium">প্রতি পিস মূল্য</label>
-                            <input
-                                type="text"
-                                value={`৳${formData.productPrice}`}
-                                className="input input-bordered w-full bg-base-100/50 mt-1"
-                                readOnly
-                            />
-                        </div>
-
-                        {/* কোয়ান্টিটি */}
-                        <div>
-                            <label className="label-text font-medium">পরিমাণ</label>
-                            <div className="flex items-center gap-2 mt-1">
-                                <button
-                                    type="button"
-                                    onClick={decrementQuantity}
-                                    className="btn btn-square btn-sm btn-outline"
-                                >
-                                    -
-                                </button>
-                                <input
-                                    type="number"
-                                    name="quantity"
-                                    value={formData.quantity}
-                                    onChange={handleQuantityChange}
-                                    className="input input-bordered w-20 text-center"
-                                    min="1"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={incrementQuantity}
-                                    className="btn btn-square btn-sm btn-outline"
-                                >
-                                    +
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+            <form onSubmit={handleSubmit} className="space-y-4 grid grid-cols-1 lg:grid-cols-2">
                 {/* ইউজার ইনফো */}
                 <div className="bg-white p-5 rounded-xl border">
                     <h4 className="font-semibold mb-3 text-lg">প্রাপকের তথ্য</h4>
@@ -479,35 +431,6 @@ export default function Checkout({ product }) {
                             </select>
                         </div>
 
-                        <div className="form-control md:col-span-2">
-                            <label className="label">
-                                <span className="label-text font-medium">পূর্ণ ঠিকানা *</span>
-                            </label>
-                            <textarea
-                                name="address"
-                                value={formData.address}
-                                onChange={handleInputChange}
-                                placeholder="আপনার বিস্তারিত ঠিকানা"
-                                className="textarea textarea-bordered"
-                                rows="2"
-                                required
-                            />
-                        </div>
-
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text font-medium">পোস্টাল কোড</span>
-                            </label>
-                            <input
-                                type="text"
-                                name="postalCode"
-                                value={formData.postalCode}
-                                onChange={handleInputChange}
-                                placeholder="1234"
-                                className="input input-bordered"
-                            />
-                        </div>
-
                         <div className="form-control">
                             <label className="label">
                                 <span className="label-text font-medium">পেমেন্ট মেথড *</span>
@@ -525,34 +448,104 @@ export default function Checkout({ product }) {
                                 <option value="card">ক্রেডিট/ডেবিট কার্ড</option> */}
                             </select>
                         </div>
+
+                        <div className="form-control md:col-span-2">
+                            <label className="label">
+                                <span className="label-text font-medium">পূর্ণ ঠিকানা *</span>
+                            </label>
+                            <textarea
+                                name="address"
+                                value={formData.address}
+                                onChange={handleInputChange}
+                                placeholder="আপনার বিস্তারিত ঠিকানা"
+                                className="textarea textarea-bordered"
+                                rows="2"
+                                required
+                            />
+                        </div>
+
+
                     </div>
                 </div>
+                <div>
+                    {/* প্রোডাক্ট ইনফো */}
+                    <div className="bg-base-200 p-5 rounded-xl">
+                        <h4 className="font-semibold mb-3 text-lg">প্রোডাক্টের বিবরণ</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="md:col-span-2">
+                                <label className="label-text font-medium">প্রোডাক্টের নাম</label>
+                                <input
+                                    type="text"
+                                    value={formData.productName}
+                                    className="input input-bordered w-full bg-base-100/50 mt-1"
+                                    readOnly
+                                />
+                            </div>
+                            <div>
+                                <label className="label-text font-medium">প্রতি পিস মূল্য</label>
+                                <input
+                                    type="text"
+                                    value={`৳${formData.productPrice}`}
+                                    className="input input-bordered w-full bg-base-100/50 mt-1"
+                                    readOnly
+                                />
+                            </div>
 
-                {/* প্রাইস ক্যালকুলেশন */}
-                <div className="bg-primary/5 p-5 rounded-xl border border-primary/20">
-                    <h4 className="font-semibold mb-3 text-lg">মূল্যের বিবরণ</h4>
-                    <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                            <span>সাবটোটাল ({formData.quantity} × ৳{formData.productPrice})</span>
-                            <span className="font-medium">৳{subtotal}</span>
+                            {/* কোয়ান্টিটি */}
+                            <div>
+                                <label className="label-text font-medium">পরিমাণ</label>
+                                <div className="flex items-center gap-2 mt-1">
+                                    <button
+                                        type="button"
+                                        onClick={decrementQuantity}
+                                        className="btn btn-square btn-sm btn-outline"
+                                    >
+                                        -
+                                    </button>
+                                    <input
+                                        type="number"
+                                        name="quantity"
+                                        value={formData.quantity}
+                                        onChange={handleQuantityChange}
+                                        className="input input-bordered w-20 text-center"
+                                        min="1"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={incrementQuantity}
+                                        className="btn btn-square btn-sm btn-outline"
+                                    >
+                                        +
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <div className="flex justify-between text-sm">
-                            <span>ডেলিভারি চার্জ</span>
-                            <span className="font-medium">৳{deliveryCharge}</span>
+                    </div>
+                    {/* প্রাইস ক্যালকুলেশন */}
+                    <div className="bg-primary/5 p-5 rounded-xl border border-primary/20">
+                        <h4 className="font-semibold mb-3 text-lg">মূল্যের বিবরণ</h4>
+                        <div className="space-y-2">
+                            <div className="flex justify-between text-sm">
+                                <span>সাবটোটাল ({formData.quantity} × ৳{formData.productPrice})</span>
+                                <span className="font-medium">৳{subtotal}</span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                                <span>ডেলিভারি চার্জ</span>
+                                <span className="font-medium">৳{deliveryCharge}</span>
+                            </div>
+                            <div className="divider my-1"></div>
+                            <div className="flex justify-between font-bold text-xl">
+                                <span>সর্বমোট</span>
+                                <span className="text-primary">৳{totalPrice}</span>
+                            </div>
+                            {formData.division && (
+                                <p className="text-xs text-base-content/70 mt-1 bg-base-200 p-2 rounded">
+                                    * {formData.division === 'Dhaka' ? 'ঢাকার ভিতর' : 'ঢাকার বাইরে'} ডেলিভারি চার্জ: ৳{deliveryCharge}
+                                </p>
+                            )}
                         </div>
-                        <div className="divider my-1"></div>
-                        <div className="flex justify-between font-bold text-xl">
-                            <span>সর্বমোট</span>
-                            <span className="text-primary">৳{totalPrice}</span>
-                        </div>
-                        {formData.division && (
-                            <p className="text-xs text-base-content/70 mt-1 bg-base-200 p-2 rounded">
-                                * {formData.division === 'Dhaka' ? 'ঢাকার ভিতর' : 'ঢাকার বাইরে'} ডেলিভারি চার্জ: ৳{deliveryCharge}
-                            </p>
-                        )}
                     </div>
                 </div>
-
                 {
                     isSubmitting ? <p>Please</p> :
 

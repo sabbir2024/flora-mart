@@ -10,6 +10,7 @@ import Link from "next/link";
 
 export default function Navbar() {
     const [showCall, setShowCall] = useState(true);
+    const [cardLength, setCardLength] = useState(true);
     const pathname = usePathname();
 
     useEffect(() => {
@@ -31,6 +32,7 @@ export default function Navbar() {
         return () => {
             window.removeEventListener("scroll", handleScroll);
         };
+
     }, []);
 
     // active link check function
@@ -85,55 +87,13 @@ export default function Navbar() {
                                     Products
                                 </Link>
                             </li>
-                            <li>
-                                <details>
-                                    <summary className={`hover:text-blue-600 transition-colors ${isActive('/categories') ? 'text-blue-600 font-semibold' : 'text-gray-700'
-                                        }`}>
-                                        Categories
-                                    </summary>
-                                    <ul className="p-2 bg-base-100 w-40 z-50 shadow-lg rounded-lg">
-                                        <li>
-                                            <Link
-                                                href="/categories/formal"
-                                                className={`hover:text-blue-600 block px-4 py-2 ${pathname === '/categories/formal'
-                                                    ? 'text-blue-600 bg-blue-50'
-                                                    : 'text-gray-700'
-                                                    }`}
-                                            >
-                                                Formal
-                                            </Link>
-                                        </li>
-                                        <li>
-                                            <Link
-                                                href="/categories/casual"
-                                                className={`hover:text-blue-600 block px-4 py-2 ${pathname === '/categories/casual'
-                                                    ? 'text-blue-600 bg-blue-50'
-                                                    : 'text-gray-700'
-                                                    }`}
-                                            >
-                                                Casual
-                                            </Link>
-                                        </li>
-                                        <li>
-                                            <Link
-                                                href="/categories/sports"
-                                                className={`hover:text-blue-600 block px-4 py-2 ${pathname === '/categories/sports'
-                                                    ? 'text-blue-600 bg-blue-50'
-                                                    : 'text-gray-700'
-                                                    }`}
-                                            >
-                                                Sports
-                                            </Link>
-                                        </li>
-                                    </ul>
-                                </details>
-                            </li>
+
                             <li>
                                 <Link
-                                    href="/my-card"
+                                    href="/my-cart"
                                     className={getLinkClass('/my-card')}
                                 >
-                                    Card
+                                    Cart
                                 </Link>
                             </li>
                             <li>
