@@ -1,9 +1,10 @@
+import Container from "../../components/Container";
 import ContactUs from "./components/ContactUs";
 
 export default function page() {
     return (
-        <div>
+        <Container>
             <ContactUs />
-        </div>
+        </Container>
     );
 }
