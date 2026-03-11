@@ -1,4 +1,5 @@
 import Container from "../../../../components/Container";
+import NewsMarquee from "../../../../components/NewsMarquee";
 import { apiUrl } from "../../../../components/url";
 import HoverImage from "./components/HoverImage";
 import ProductInfo from "./components/ProductInfo";
@@ -13,7 +14,6 @@ export default async function Page({ params }) {
     })
     const product = await res.json()
 
-    console.log("produc =>", product)
     if (!product) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -29,6 +29,7 @@ export default async function Page({ params }) {
 
     return (
         <Container>
+            <NewsMarquee />
             <div className="grid grid-cols-1 lg:grid-cols-2">
 
                 <HoverImage src={imageUrl}

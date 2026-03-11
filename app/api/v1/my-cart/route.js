@@ -6,8 +6,7 @@ import { ObjectId } from "mongodb";
 export const GET = async (req) => {
     try {
         const { searchParams } = new URL(req.url);
-        const productId = await searchParams.get("productId")
-        console.log('product_id=>', productId)
+        const productId = await searchParams.get("productId");
         if (!productId) {
             return NextResponse.json(
                 { success: false, message: 'Unauthorized User' },

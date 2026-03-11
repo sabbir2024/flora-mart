@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import Swal from 'sweetalert2';
 import { useRouter } from 'next/navigation';
+import { apiUrl } from '../../../components/url';
 
 export default function Mycard({ bookings }) {
     const router = useRouter();
@@ -168,7 +169,7 @@ export default function Mycard({ bookings }) {
     };
 
     // ডিলিট কনফার্মেশন
-    const confirmDelete = (id) => {
+    const confirmDelete = async (id) => {
         Swal.fire({
             title: 'অর্ডার বাতিল করুন?',
             text: "আপনি কি এই অর্ডারটি বাতিল করতে চান?",
@@ -178,14 +179,48 @@ export default function Mycard({ bookings }) {
             cancelButtonColor: '#3085d6',
             confirmButtonText: 'হ্যাঁ, বাতিল করুন',
             cancelButtonText: 'না, ফিরে যান'
-        }).then((result) => {
+        }).then(async (result) => {
             if (result.isConfirmed) {
-                // এখানে ডিলিট API কল হবে
-                Swal.fire(
-                    'বাতিল করা হয়েছে!',
-                    'আপনার অর্ডারটি বাতিল করা হয়েছে।',
-                    'success'
-                );
+                try {
+                    // ⭐ URL এ id পাথ হিসেবে দিন (query parameter না)
+                    const response = await fetch(`${apiUrl}/my-cart/${id}`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            order_status: "cancelled"
+                        })
+                    });
+
+                    console.log('Response status:', response.status);
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        Swal.fire(
+                            'বাতিল করা হয়েছে!',
+                            'আপনার অর্ডারটি বাতিল করা হয়েছে।',
+                            'success'
+                        );
+                        router.refresh();
+                    }
+
+                } catch (error) {
+                    console.error('Delete error:', error);
+                    Swal.fire({
+                        position: "center",
+                        icon: "error",
+                        title: "সমস্যা হয়েছে!",
+                        text: error?.message || "নেটওয়ার্ক সমস্যা। দয়া করে আবার চেষ্টা করুন।",
+                        showConfirmButton: true,
+                        confirmButtonText: "ঠিক আছে"
+                    });
+                }
             }
         });
     };

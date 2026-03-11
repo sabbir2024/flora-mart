@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'; // Server component এর জন্য
 import Container from "../../components/Container"
 import { apiUrl } from "../../components/url";
 import Mycart from "./components/Mycart";
+import NewsMarquee from '../../components/NewsMarquee';
 
 export default async function page() {
     const cookieStore = await cookies();
@@ -20,6 +21,7 @@ export default async function page() {
 
     return (
         <Container>
+            <NewsMarquee />
             <Mycart bookings={bookings?.data || []} />
         </Container>
     );

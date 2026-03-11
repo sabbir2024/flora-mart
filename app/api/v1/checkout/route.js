@@ -31,7 +31,6 @@ export const POST = async (req) => {
         );
 
     } catch (error) {
-        console.error("Checkout API Error:", error);
         return NextResponse.json(
             { success: false, message: error.message },
             { status: 500 }
