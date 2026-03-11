@@ -9,7 +9,7 @@ export default function ContactUs() {
                             <a className="text-2xl font-bold text-white">ProblemSolve</a>
                         </div>
                         <div className="flex-none">
-                            <button className="btn btn-primary text-white px-6">
+                            <button className="btn btn-info text-black font-bold px-6">
                                 Sign In
                             </button>
                         </div>
@@ -171,13 +171,13 @@ export default function ContactUs() {
                                             </label>
                                             <input
                                                 type="file"
-                                                className="file-input file-input-bordered file-input-primary w-full bg-white dark:bg-gray-900"
+                                                className="file-input file-input-bordered file-input-info w-full bg-white dark:bg-gray-900"
                                                 multiple
                                             />
                                         </div>
 
-                                        {/* Submit Button with DaisyUI */}
-                                        <button className="btn btn-primary w-full text-white">
+                                        {/* Submit Button with btn-info and black bold text */}
+                                        <button className="btn btn-info w-full text-black font-bold">
                                             Submit Problem
                                         </button>
 
@@ -188,7 +188,7 @@ export default function ContactUs() {
                                             <p className="text-gray-600 dark:text-gray-400 mb-3">
                                                 Already have an account? Track your problem status
                                             </p>
-                                            <button className="btn btn-outline btn-primary w-full">
+                                            <button className="btn btn-info w-full text-black font-bold">
                                                 Sign In to Track Problems
                                             </button>
                                         </div>
