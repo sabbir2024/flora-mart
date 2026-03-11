@@ -42,13 +42,13 @@ export default function Mobile() {
             )
         },
         {
-            href: '/profile',
-            label: 'Profile',
+            href: '/contact',
+            label: 'contact',
             icon: (
                 <svg className="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <g fill="currentColor">
-                        <circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" strokeLinecap="square" strokeMiterlimit="10" strokeWidth="2"></circle>
-                        <path d="M5.3 18c-.8 0-1.4-.7-1.2-1.5C5 13.5 8.2 11 12 11s7 2.5 7.9 5.5c.2.8-.4 1.5-1.2 1.5H5.3z" fill="none" stroke="currentColor" strokeLinecap="square" strokeMiterlimit="10" strokeWidth="2"></path>
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeMiterlimit="10" />
+                        <path d="M7 7h10v2H7zM7 11h10v2H7zM7 15h6v2H7z" fill="currentColor" />
                     </g>
                 </svg>
             )
