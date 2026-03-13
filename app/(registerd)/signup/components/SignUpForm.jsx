@@ -1,12 +1,55 @@
 'use client'
+
+import Swal from "sweetalert2";
+import { apiUrl } from "../../../components/url";
+import { useRouter } from "next/navigation";
+
 export default function SignUpForm() {
+    const router = useRouter()
     const heandleSubmit = async (e) => {
         e.preventDefault()
         const form = e.target;
         const name = form.name.value;
         const email = form.email.value;
         const password = form.password.value;
-        console.log(name, email, password)
+
+        const userInfo = { name, email, password }
+
+        try {
+            const result = await fetch(`${apiUrl}/user`, {
+                method: 'POST',
+                headers: {
+                    'Accept': "application/json",
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userInfo)
+            })
+            const data = await result.json();
+            console.log('resulttt', data)
+
+            if (data.success) {
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: data.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                router.push('/')
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: data.message
+                });
+            }
+        } catch (error) {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: error.message,
+            });
+        }
     }
     return (
         <form onSubmit={heandleSubmit} className="space-y-6">
@@ -54,24 +97,6 @@ export default function SignUpForm() {
                 />
             </div>
 
-            {/* Remember Me & Forgot Password */}
-            <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                    <input
-                        type="checkbox"
-                        id="remember"
-                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                    <label htmlFor="remember" className="ml-2 block text-sm text-gray-700">
-                        Remember me
-                    </label>
-                </div>
-                <div className="text-sm">
-                    <a href="#" className="text-blue-600 hover:text-blue-800 hover:underline">
-                        Forgot password?
-                    </a>
-                </div>
-            </div>
 
             {/* Login Button */}
             <button
@@ -85,7 +110,7 @@ export default function SignUpForm() {
             <p className="text-center text-gray-600 text-sm">
                 Alredy have an account?{' '}
                 <a href="/login" className="text-blue-600 hover:text-blue-800 hover:underline font-medium">
-                    Sign up
+                    log in
                 </a>
             </p>
         </form>

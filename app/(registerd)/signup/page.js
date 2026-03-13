@@ -8,8 +8,8 @@ export default function page() {
                 <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
                     {/* হেডার */}
                     <div className="text-center mb-8">
-                        <h2 className="text-3xl font-bold text-gray-800 mb-2">Welcome Back</h2>
-                        <p className="text-gray-600">Please login to your account</p>
+                        <h2 className="text-3xl font-bold text-gray-800 mb-2">Welcome Fabric<spun className='text-info'>Flora</spun> Wold</h2>
+                        <p className="text-gray-600">Please create to your account</p>
                     </div>
 
 

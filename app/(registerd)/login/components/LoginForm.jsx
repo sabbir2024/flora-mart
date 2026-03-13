@@ -1,5 +1,7 @@
 'use client'
 
+import { apiUrl } from "../../../components/url";
+
 export default function LoginForm() {
     const heandleSubmit = async (e) => {
         e.preventDefault()
@@ -7,6 +9,7 @@ export default function LoginForm() {
         const email = form.email.value;
         const password = form.password.value;
         console.log(email, password)
+
     }
     return (
         <form onSubmit={heandleSubmit} className="space-y-6">
