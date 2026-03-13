@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function ContactUs() {
     return (
         <div>
@@ -8,11 +10,11 @@ export default function ContactUs() {
                         <div className="flex-1">
                             <a className="text-2xl font-bold text-white">ProblemSolve</a>
                         </div>
-                        <div className="flex-none">
+                        <Link href={'/login'} className="flex-none">
                             <button className="btn btn-info text-black font-bold px-6">
                                 Sign In
                             </button>
-                        </div>
+                        </Link>
                     </div>
 
                     <div className="container flex flex-col flex-1 px-6 py-12 mx-auto">
