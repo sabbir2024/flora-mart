@@ -13,6 +13,8 @@ export default function Navbar() {
     const [cardLength, setCardLength] = useState(true);
     const pathname = usePathname();
 
+    const email = null;
+
     useEffect(() => {
         let lastScrollY = window.scrollY;
 
@@ -149,63 +151,66 @@ export default function Navbar() {
                         </div>
 
                         {/* প্রোফাইল ড্রপডাউন */}
-                        <div className="dropdown dropdown-end">
-                            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-                                <div className={`w-10 rounded-full ring-2 ring-offset-2 ${isActive('/profile') || isActive('/orders') || isActive('/settings')
-                                    ? 'ring-blue-600'
-                                    : 'ring-blue-400'
-                                    }`}>
-                                    <img
-                                        alt="Profile"
-                                        src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                                        className="object-cover"
-                                    />
+                        {email &&
+                            <div className="dropdown dropdown-end">
+                                <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
+                                    <div className={`w-10 rounded-full ring-2 ring-offset-2 ${isActive('/profile') || isActive('/orders') || isActive('/settings')
+                                        ? 'ring-blue-600'
+                                        : 'ring-blue-400'
+                                        }`}>
+                                        <img
+                                            alt="Profile"
+                                            src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                                            className="object-cover"
+                                        />
+                                    </div>
                                 </div>
+                                <ul
+                                    tabIndex={0}
+                                    className="menu menu-sm dropdown-content bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow-xl">
+                                    <li className="menu-title">
+                                        <span>My Account</span>
+                                    </li>
+                                    <li>
+                                        <Link
+                                            href="/profile"
+                                            className={`hover:text-blue-600 ${isActive('/profile') ? 'text-blue-600 bg-blue-50' : ''
+                                                }`}
+                                        >
+                                            Profile <span className="badge badge-sm bg-blue-500 text-white">New</span>
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link
+                                            href="/orders"
+                                            className={`hover:text-blue-600 ${isActive('/orders') ? 'text-blue-600 bg-blue-50' : ''
+                                                }`}
+                                        >
+                                            Orders
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link
+                                            href="/settings"
+                                            className={`hover:text-blue-600 ${isActive('/settings') ? 'text-blue-600 bg-blue-50' : ''
+                                                }`}
+                                        >
+                                            Settings
+                                        </Link>
+                                    </li>
+                                    <li><hr className="my-1" /></li>
+                                    <li>
+                                        <Link
+                                            href="/logout"
+                                            className="text-red-500 hover:text-red-700"
+                                        >
+                                            Logout
+                                        </Link>
+                                    </li>
+                                </ul>
                             </div>
-                            <ul
-                                tabIndex={0}
-                                className="menu menu-sm dropdown-content bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow-xl">
-                                <li className="menu-title">
-                                    <span>My Account</span>
-                                </li>
-                                <li>
-                                    <Link
-                                        href="/profile"
-                                        className={`hover:text-blue-600 ${isActive('/profile') ? 'text-blue-600 bg-blue-50' : ''
-                                            }`}
-                                    >
-                                        Profile <span className="badge badge-sm bg-blue-500 text-white">New</span>
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
-                                        href="/orders"
-                                        className={`hover:text-blue-600 ${isActive('/orders') ? 'text-blue-600 bg-blue-50' : ''
-                                            }`}
-                                    >
-                                        Orders
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
-                                        href="/settings"
-                                        className={`hover:text-blue-600 ${isActive('/settings') ? 'text-blue-600 bg-blue-50' : ''
-                                            }`}
-                                    >
-                                        Settings
-                                    </Link>
-                                </li>
-                                <li><hr className="my-1" /></li>
-                                <li>
-                                    <Link
-                                        href="/logout"
-                                        className="text-red-500 hover:text-red-700"
-                                    >
-                                        Logout
-                                    </Link>
-                                </li>
-                            </ul>
-                        </div>
+                        }
+
                     </div>
                 </div>
             </div>
