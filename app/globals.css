@@ -3,11 +3,11 @@
 @source "./components/**/*.{js,ts,jsx,tsx}";
 
 
-/* @plugin "daisyui"; */
+@plugin "daisyui";
 
-@plugin "daisyui" {
+/* @plugin "daisyui" {
   themes: retro --default;
-}
+} */
 
 @keyframes blob {
   0% {
