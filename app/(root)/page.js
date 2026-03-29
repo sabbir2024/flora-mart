@@ -1,14 +1,18 @@
 import Container from "../components/Container";
 import NewsMarquee from "../components/NewsMarquee";
-import Banner from "./conponents/banner/Banner";
-import MostPopulor from "./conponents/most-populor/MostPopulor";
+import CategoryBento from "./conponents/CategoryBento/CategoryBento";
+import Filters from "./conponents/Filters/Filters";
+import Hero from "./conponents/hero/Hero";
+import ProductGrid from "./conponents/ProductGrid/ProductGrid";
 
 export default function page() {
     return (
         <Container>
-            <Banner />
+            <Hero />
             <NewsMarquee />
-            <MostPopulor />
+            <Filters />
+            <ProductGrid />
+            <CategoryBento />
         </Container>
     );
 }

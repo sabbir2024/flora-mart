@@ -70,7 +70,7 @@ export default function Mobile() {
                         key={item.href}
                         href={item.href}
                         className={isActive(item.href)
-                            ? "dock-active text-blue-600"
+                            ? "dock-active text-orange-600"
                             : "text-gray-600 hover:text-blue-600"
                         }
                     >

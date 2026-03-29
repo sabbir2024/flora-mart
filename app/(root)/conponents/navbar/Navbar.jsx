@@ -48,7 +48,7 @@ export default function Navbar() {
     // active link style
     const getLinkClass = (path) => {
         return `hover:text-blue-600 transition-colors duration-200 ${isActive(path)
-            ? 'text-blue-600 font-semibold border-b-2 border-blue-600'
+            ? 'text-orange-600 font-semibold border-b-2 border-orange-600'
             : 'text-gray-700'
             }`;
     };
@@ -65,7 +65,7 @@ export default function Navbar() {
                         <span className="btn btn-ghost text-xl">
                             <Logo />
                         </span>
-                        <Link href="/" className="text-info text-xl font-bold hover:text-blue-600 transition-colors">
+                        <Link href="/" className="text-orange-600 text-xl font-bold hover:text-blue-600 transition-colors">
                             Flora Mart
                         </Link>
                     </div>
@@ -100,10 +100,10 @@ export default function Navbar() {
                             </li>
                             <li>
                                 <Link
-                                    href="/contact"
+                                    href="/about"
                                     className={getLinkClass('/contact')}
                                 >
-                                    Contact
+                                    About
                                 </Link>
                             </li>
                         </ul>
@@ -114,7 +114,7 @@ export default function Navbar() {
                         {/* সার্চ আইকন */}
                         <Link
                             href="/search"
-                            className={`btn btn-ghost btn-circle ${isActive('/search') ? 'text-blue-600 bg-blue-50' : ''
+                            className={`btn btn-ghost btn-circle ${isActive('/search') ? 'text-orange-600 bg-blue-50' : ''
                                 }`}
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -129,7 +129,7 @@ export default function Navbar() {
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                                     </svg>
-                                    <span className="badge badge-sm indicator-item bg-blue-500 text-white">8</span>
+                                    <span className="badge badge-sm indicator-item bg-orange-600 text-white">8</span>
                                 </div>
                             </div>
                             <div
