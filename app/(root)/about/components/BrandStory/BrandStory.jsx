@@ -1,6 +1,6 @@
 export default function BrandStory() {
     return (
-        <section className="bg-gray-100 py-20 md:py-32">
+        <section className="bg-gray-100 py-20 font-bold md:py-32">
             <div className="max-w-4xl mx-auto px-4 md:px-6 text-center">
 
                 <h2 className="text-2xl md:text-4xl font-bold mb-10">
