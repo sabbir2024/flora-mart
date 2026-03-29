@@ -9,18 +9,18 @@ export default function Hero() {
                     </span>
 
                     <h1 className="text-4xl md:text-6xl font-black leading-tight">
-                        Curated <br /> Objects for <br /> Modern Living.
+                        Curated <br /> Objects for <br /> <span className="text-orange-600">Modern</span> Living.
                     </h1>
 
-                    <p className="text-gray-500">
+                    <p className="text-gray-500 font-bold">
                         A strictly filtered selection of high-quality essentials.
                     </p>
 
                     <div className="flex flex-wrap gap-4">
-                        <button className="bg-orange-600 text-white px-6 py-3 rounded-xl">
+                        <button className="bg-orange-600 font-bold text-white px-6 py-3 rounded-xl">
                             Explore
                         </button>
-                        <button className="bg-gray-200 px-6 py-3 rounded-xl">
+                        <button className="bg-gray-200 font-bold text-black px-6 py-3 rounded-xl">
                             Philosophy
                         </button>
                     </div>

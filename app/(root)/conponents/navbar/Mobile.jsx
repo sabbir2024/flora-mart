@@ -42,8 +42,8 @@ export default function Mobile() {
             )
         },
         {
-            href: '/contact',
-            label: 'contact',
+            href: '/about',
+            label: 'about',
             icon: (
                 <svg className="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <g fill="currentColor">
