@@ -83,10 +83,10 @@ export default function Navbar() {
                             </li>
                             <li>
                                 <Link
-                                    href="/products"
-                                    className={getLinkClass('/products')}
+                                    href="/shop"
+                                    className={getLinkClass('/shop')}
                                 >
-                                    Products
+                                    Shop
                                 </Link>
                             </li>
 

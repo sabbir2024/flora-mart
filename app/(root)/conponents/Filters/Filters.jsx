@@ -10,7 +10,7 @@ export default function Filters() {
                         name="category"
                         className="tab rounded-lg transition-all font-bold text-black checked:bg-orange-600 checked:text-white"
                         aria-label="All"
-                        defaultChecked
+
                     />
 
                     <input
@@ -18,6 +18,7 @@ export default function Filters() {
                         name="category"
                         className="tab rounded-lg transition-all font-bold text-black checked:bg-orange-600 checked:text-white"
                         aria-label="Home"
+                        defaultChecked
                     />
 
                     <input

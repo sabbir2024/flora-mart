@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Hero() {
     return (
         <section className="max-w-screen-2xl mx-auto px-4 md:px-6 mb-16 md:mb-24 pt-24">
@@ -17,9 +19,9 @@ export default function Hero() {
                     </p>
 
                     <div className="flex flex-wrap gap-4">
-                        <button className="bg-orange-600 font-bold text-white px-6 py-3 rounded-xl">
+                        <Link href={'/shop'} className="bg-orange-600 font-bold text-white px-6 py-3 rounded-xl">
                             Explore
-                        </button>
+                        </Link>
                         <button className="bg-gray-200 font-bold text-black px-6 py-3 rounded-xl">
                             Philosophy
                         </button>

@@ -6,7 +6,7 @@ export default function Footer() {
 
                 {/* Brand */}
                 <div className="md:col-span-1">
-                    <div className="text-xl font-black text-orange-600 dark:text-orange-300 mb-4">
+                    <div className="text-xl font-black text-orange-600 dark:text-orange-600 mb-4">
                         Fabric Flora
                     </div>
                     <p className="text-zinc-400 text-xs leading-relaxed max-w-xs">

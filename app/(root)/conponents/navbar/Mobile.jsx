@@ -21,8 +21,8 @@ export default function Mobile() {
             )
         },
         {
-            href: '/products',
-            label: 'Products',
+            href: '/shop',
+            label: 'Shop',
             icon: (
                 <svg className="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <g fill="currentColor" strokeLinejoin="miter" strokeLinecap="butt">
@@ -43,7 +43,7 @@ export default function Mobile() {
         },
         {
             href: '/about',
-            label: 'about',
+            label: 'About',
             icon: (
                 <svg className="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <g fill="currentColor">
@@ -64,7 +64,7 @@ export default function Mobile() {
 
     return (
         <div className="flex lg:hidden">
-            <div className="dock dock-xs bg-white shadow-lg">
+            <div className="dock dock-xs bg-white shadow-lg font-bold">
                 {navItems.map((item) => (
                     <Link
                         key={item.href}
