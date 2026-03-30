@@ -18,7 +18,7 @@ export default async function ProductGrid() {
 
     return (
         <section className="grow">
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-8">
                 {products.map((p, i) => (
                     <Card key={i} product={p} />
                 ))}
