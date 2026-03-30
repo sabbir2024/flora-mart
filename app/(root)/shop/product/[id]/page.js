@@ -8,11 +8,10 @@ import ProductInfo from "./components/ProductInfo";
 export default async function Page({ params }) {
     const resolvedParams = await params;
     const id = resolvedParams?.id;
-
     const res = await fetch(`${apiUrl}/products/${id}`, {
         cache: "no-cache"
     })
-    const product = await res.json()
+    const product = await res.json();
 
     if (!product) {
         return (
@@ -26,7 +25,6 @@ export default async function Page({ params }) {
     }
 
     const imageUrl = product?.product_url;
-
     return (
         <Container>
             <NewsMarquee />

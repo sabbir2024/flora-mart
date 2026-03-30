@@ -25,7 +25,7 @@ export default function SignUpForm() {
                 body: JSON.stringify(userInfo)
             })
             const data = await result.json();
-            console.log('resulttt', data)
+            // console.log('resulttt', data)
 
             if (data.success) {
                 Swal.fire({

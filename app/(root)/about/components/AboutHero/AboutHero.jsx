@@ -1,6 +1,6 @@
 export default function AboutHero() {
     return (
-        <section className="max-w-screen-2xl font-bold mx-auto px-4 md:px-6 py-16 md:py-32 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <section className="max-w-screen-2xl font-bold mx-auto px-4 md:px-6  grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
 
             <div className="lg:col-span-7 relative">
                 <div className="rounded-xl overflow-hidden aspect-4/5 md:aspect-16/10">

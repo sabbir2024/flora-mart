@@ -5,15 +5,25 @@ import { useState } from 'react';
 import Swal from 'sweetalert2';
 import Cookies from 'js-cookie';
 import { apiUrl } from '../../../../components/url';
-import { useRouter } from 'next/navigation'
-
-
+import { useRouter } from 'next/navigation';
+import {
+    IoPersonOutline,
+    IoMailOutline,
+    IoCallOutline,
+    IoLocationOutline,
+    IoCartOutline,
+    IoPricetagOutline,
+    IoCubeOutline,
+    IoCashOutline,
+    IoCheckmarkCircleOutline,
+    IoArrowForwardOutline,
+    IoHomeOutline,
+    IoBusinessOutline
+} from 'react-icons/io5';
 
 export default function Checkout({ product }) {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
-
-
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -29,7 +39,6 @@ export default function Checkout({ product }) {
 
     const [selectedDivision, setSelectedDivision] = useState(null);
 
-    // কোয়ান্টিটি আপডেট
     const handleQuantityChange = (e) => {
         const newQuantity = parseInt(e.target.value) || 1;
         setFormData(prev => ({
@@ -38,7 +47,6 @@ export default function Checkout({ product }) {
         }));
     };
 
-    // কোয়ান্টিটি ইনক্রিমেন্ট
     const incrementQuantity = () => {
         setFormData(prev => ({
             ...prev,
@@ -46,7 +54,6 @@ export default function Checkout({ product }) {
         }));
     };
 
-    // কোয়ান্টিটি ডিক্রিমেন্ট
     const decrementQuantity = () => {
         setFormData(prev => ({
             ...prev,
@@ -61,16 +68,14 @@ export default function Checkout({ product }) {
             [name]: value
         }));
 
-        // যখন বিভাগ পরিবর্তন হবে, তখন জেলা রিসেট করুন
         if (name === 'division') {
             setSelectedDivision(value);
             setFormData(prev => ({
                 ...prev,
-                district: '' // জেলা রিসেট
+                district: ''
             }));
         }
     };
-
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -96,20 +101,21 @@ export default function Checkout({ product }) {
                 order_date: new Date().toISOString()
             };
 
-            // ভ্যালিডেশন চেক
             if (!orderData.customer_name || !orderData.customer_phone || !orderData.delivery_address) {
                 Swal.fire({
                     position: "center",
                     icon: "warning",
                     title: "তথ্য অসম্পূর্ণ!",
                     text: "দয়া করে সকল প্রয়োজনীয় তথ্য দিন।",
-                    showConfirmButton: true,
-                    confirmButtonText: "ঠিক আছে"
+                    confirmButtonText: "ঠিক আছে",
+                    customClass: {
+                        popup: 'rounded-2xl',
+                        confirmButton: 'bg-orange-600 hover:bg-orange-700'
+                    }
                 });
                 setIsSubmitting(false);
                 return;
             }
-
 
             const response = await fetch(`${apiUrl}/checkout`, {
                 method: 'POST',
@@ -122,7 +128,6 @@ export default function Checkout({ product }) {
             const result = await response.json();
 
             if (response.ok) {
-
                 Cookies.set("product_id", result.order_id, {
                     expires: 30,
                     path: '/',
@@ -133,20 +138,28 @@ export default function Checkout({ product }) {
                 await Swal.fire({
                     position: "center",
                     icon: "success",
-                    title: "অর্ডার সফলভাবে সম্পন্ন হয়েছে!",
+                    title: "অর্ডার সফলভাবে সম্পন্ন হয়েছে! 🎉",
                     html: `
-                    <div class="text-left">
-                        <p>অর্ডার আইডি: <strong>${result?.order_id || 'N/A'}</strong></p>
-                        <p>মোট মূল্য: <strong>৳${totalPrice}</strong></p>
-                        <p>পেমেন্ট মেথড: <strong>${formData.paymentMethod === 'cod' ? 'ক্যাশ অন ডেলিভারি' : formData.paymentMethod}</strong></p>
-                    </div>
-                `,
+                        <div class="text-left space-y-2">
+                            <div class="bg-orange-50 p-3 rounded-lg">
+                                <p class="text-sm">অর্ডার আইডি: <strong class="text-orange-600">${result?.order_id || 'N/A'}</strong></p>
+                                <p class="text-sm">মোট মূল্য: <strong class="text-orange-600">৳${totalPrice}</strong></p>
+                                <p class="text-sm">পেমেন্ট মেথড: <strong>${formData.paymentMethod === 'cod' ? 'ক্যাশ অন ডেলিভারি' : formData.paymentMethod}</strong></p>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2">আপনার অর্ডারটি সফলভাবে গ্রহণ করা হয়েছে। ডেলিভারির জন্য ধন্যবাদ!</p>
+                        </div>
+                    `,
                     showConfirmButton: true,
                     confirmButtonText: "ঠিক আছে",
-                    confirmButtonColor: "#3085d6"
+                    confirmButtonColor: "#ea580c",
+                    background: "#ffffff",
+                    customClass: {
+                        popup: 'rounded-2xl',
+                        title: 'text-xl font-bold',
+                        confirmButton: 'bg-orange-600 hover:bg-orange-700 px-6 py-2 rounded-full'
+                    }
                 });
 
-                // অর্ডার সফল হলে ফর্ম রিসেট
                 setFormData({
                     ...formData,
                     name: '',
@@ -160,53 +173,46 @@ export default function Checkout({ product }) {
                     paymentMethod: 'cod'
                 });
 
-                // রিডাইরেক্ট বা মডাল বন্ধ করুন
                 router.push('/my-cart');
-                // setIsModalOpen(false);
-
             } else {
-                // এরর হ্যান্ডলিং
                 Swal.fire({
                     position: "center",
                     icon: "error",
                     title: "অর্ডার সম্পন্ন হয়নি!",
                     text: result?.message || "দয়া করে আবার চেষ্টা করুন",
-                    showConfirmButton: true,
-                    confirmButtonText: "ঠিক আছে"
+                    confirmButtonText: "আবার চেষ্টা করুন",
+                    confirmButtonColor: "#ea580c"
                 });
             }
         } catch (error) {
-
-            // নেটওয়ার্ক বা অন্যান্য এরর
             Swal.fire({
                 position: "center",
                 icon: "error",
                 title: "সমস্যা হয়েছে!",
                 text: error?.message || "নেটওয়ার্ক সমস্যা। দয়া করে আবার চেষ্টা করুন।",
-                showConfirmButton: true,
-                confirmButtonText: "ঠিক আছে"
+                confirmButtonText: "ঠিক আছে",
+                confirmButtonColor: "#ea580c"
             });
         } finally {
             setIsSubmitting(false);
         }
     };
 
-    // ডেলিভারি চার্জ ক্যালকুলেট (শহর অনুযায়ী)
     const getDeliveryCharge = () => {
         const insideDhaka = ['Dhaka', 'ঢাকা'];
-        return insideDhaka.includes(formData.district) ? 80 : 150;
+        return insideDhaka.includes(formData.district) ? 60 : 120;
     };
 
     const deliveryCharge = getDeliveryCharge();
     const subtotal = formData.quantity * product?.price?.current_price;
     const totalPrice = subtotal + deliveryCharge;
 
-    // বাংলাদেশের বিভাগ ও জেলার ডাটা
     const divisions = [
         {
             "id": 1,
             "name": "Dhaka",
             "bn_name": "ঢাকা",
+            "icon": <IoBusinessOutline className="text-orange-500" />,
             "districts": [
                 { "name": "Dhaka", "bn_name": "ঢাকা" },
                 { "name": "Faridpur", "bn_name": "ফরিদপুর" },
@@ -227,6 +233,7 @@ export default function Checkout({ product }) {
             "id": 2,
             "name": "Chittagong",
             "bn_name": "চট্টগ্রাম",
+            "icon": <IoHomeOutline className="text-orange-500" />,
             "districts": [
                 { "name": "Brahmanbaria", "bn_name": "ব্রাহ্মণবাড়িয়া" },
                 { "name": "Comilla", "bn_name": "কুমিল্লা" },
@@ -245,6 +252,7 @@ export default function Checkout({ product }) {
             "id": 3,
             "name": "Rajshahi",
             "bn_name": "রাজশাহী",
+            "icon": <IoHomeOutline className="text-orange-500" />,
             "districts": [
                 { "name": "Bogra", "bn_name": "বগুড়া" },
                 { "name": "Joypurhat", "bn_name": "জয়পুরহাট" },
@@ -260,6 +268,7 @@ export default function Checkout({ product }) {
             "id": 4,
             "name": "Khulna",
             "bn_name": "খুলনা",
+            "icon": <IoHomeOutline className="text-orange-500" />,
             "districts": [
                 { "name": "Bagerhat", "bn_name": "বাগেরহাট" },
                 { "name": "Chuadanga", "bn_name": "চুয়াডাঙ্গা" },
@@ -277,6 +286,7 @@ export default function Checkout({ product }) {
             "id": 5,
             "name": "Barisal",
             "bn_name": "বরিশাল",
+            "icon": <IoHomeOutline className="text-orange-500" />,
             "districts": [
                 { "name": "Barguna", "bn_name": "বরগুনা" },
                 { "name": "Barisal", "bn_name": "বরিশাল" },
@@ -290,6 +300,7 @@ export default function Checkout({ product }) {
             "id": 6,
             "name": "Sylhet",
             "bn_name": "সিলেট",
+            "icon": <IoHomeOutline className="text-orange-500" />,
             "districts": [
                 { "name": "Habiganj", "bn_name": "হবিগঞ্জ" },
                 { "name": "Moulvibazar", "bn_name": "মৌলভীবাজার" },
@@ -301,6 +312,7 @@ export default function Checkout({ product }) {
             "id": 7,
             "name": "Rangpur",
             "bn_name": "রংপুর",
+            "icon": <IoHomeOutline className="text-orange-500" />,
             "districts": [
                 { "name": "Dinajpur", "bn_name": "দিনাজপুর" },
                 { "name": "Gaibandha", "bn_name": "গাইবান্ধা" },
@@ -316,6 +328,7 @@ export default function Checkout({ product }) {
             "id": 8,
             "name": "Mymensingh",
             "bn_name": "ময়মনসিংহ",
+            "icon": <IoHomeOutline className="text-orange-500" />,
             "districts": [
                 { "name": "Jamalpur", "bn_name": "জামালপুর" },
                 { "name": "Mymensingh", "bn_name": "ময়মনসিংহ" },
@@ -325,7 +338,6 @@ export default function Checkout({ product }) {
         }
     ];
 
-    // নির্বাচিত বিভাগের জেলাসমূহ
     const getDistrictsForSelectedDivision = () => {
         if (!formData.division) return [];
         const division = divisions.find(d => d.name === formData.division);
@@ -333,234 +345,288 @@ export default function Checkout({ product }) {
     };
 
     return (
-        <div className="w-full mx-auto p-6 bg-base-100 rounded-2xl shadow-xl">
-            <h3 className="font-bold text-2xl mb-6 text-center border-b pb-4">
-                অর্ডার কনফার্মেশন
-            </h3>
-
-            <form onSubmit={handleSubmit} className="space-y-4 grid grid-cols-1 lg:grid-cols-2">
-                {/* ইউজার ইনফো */}
-                <div className="bg-white p-5 rounded-xl border">
-                    <h4 className="font-semibold mb-3 text-lg">প্রাপকের তথ্য</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text font-medium">পূর্ণ নাম *</span>
-                            </label>
-                            <input
-                                type="text"
-                                name="name"
-                                value={formData.name}
-                                onChange={handleInputChange}
-                                placeholder="আপনার নাম লিখুন"
-                                className="input input-bordered"
-                                required
-                            />
-                        </div>
-
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text font-medium">ইমেইল *</span>
-                            </label>
-                            <input
-                                type="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleInputChange}
-                                placeholder="your@email.com"
-                                className="input input-bordered"
-                                required
-                            />
-                        </div>
-
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text font-medium">মোবাইল নম্বর *</span>
-                            </label>
-                            <input
-                                type="tel"
-                                name="phone"
-                                value={formData.phone}
-                                onChange={handleInputChange}
-                                placeholder="01XXXXXXXXX"
-                                className="input input-bordered"
-                                required
-                            />
-                        </div>
-
-                        {/* বিভাগ সিলেক্ট */}
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text font-medium">বিভাগ *</span>
-                            </label>
-                            <select
-                                name="division"
-                                value={formData.division}
-                                onChange={handleInputChange}
-                                className="select select-bordered"
-                                required
-                            >
-                                <option value="">বিভাগ নির্বাচন করুন</option>
-                                {divisions.map(div => (
-                                    <option key={div.id} value={div.name}>
-                                        {div.bn_name} - {div.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        {/* জেলা সিলেক্ট */}
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text font-medium">জেলা *</span>
-                            </label>
-                            <select
-                                name="district"
-                                value={formData.district}
-                                onChange={handleInputChange}
-                                className="select select-bordered"
-                                required
-                                disabled={!formData.division}
-                            >
-                                <option value="">জেলা নির্বাচন করুন</option>
-                                {getDistrictsForSelectedDivision().map((district, index) => (
-                                    <option key={index} value={district.name}>
-                                        {district.bn_name} - {district.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text font-medium">পেমেন্ট মেথড *</span>
-                            </label>
-                            <select
-                                name="paymentMethod"
-                                value={formData.paymentMethod}
-                                onChange={handleInputChange}
-                                className="select select-bordered"
-                                required
-                            >
-                                <option value="cod">ক্যাশ অন ডেলিভারি</option>
-                                {/* <option value="bkash">বিকাশ</option>
-                                <option value="nagad">নগদ</option>
-                                <option value="card">ক্রেডিট/ডেবিট কার্ড</option> */}
-                            </select>
-                        </div>
-
-                        <div className="form-control md:col-span-2">
-                            <label className="label">
-                                <span className="label-text font-medium">পূর্ণ ঠিকানা *</span>
-                            </label>
-                            <textarea
-                                name="address"
-                                value={formData.address}
-                                onChange={handleInputChange}
-                                placeholder="আপনার বিস্তারিত ঠিকানা"
-                                className="textarea textarea-bordered"
-                                rows="2"
-                                required
-                            />
-                        </div>
-
-
-                    </div>
+        <div className="w-full mx-auto p-4 sm:p-6 bg-linear-to-br from-white to-orange-50/30 rounded-2xl shadow-2xl border border-orange-100">
+            {/* Header */}
+            <div className="text-center mb-6">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-linear-to-r from-orange-600 to-orange-500 text-white mb-3 shadow-lg">
+                    <IoCartOutline className="text-3xl" />
                 </div>
-                <div>
-                    {/* প্রোডাক্ট ইনফো */}
-                    <div className="bg-base-200 p-5 rounded-xl">
-                        <h4 className="font-semibold mb-3 text-lg">প্রোডাক্টের বিবরণ</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="md:col-span-2">
-                                <label className="label-text font-medium">প্রোডাক্টের নাম</label>
-                                <input
-                                    type="text"
-                                    value={formData.productName}
-                                    className="input input-bordered w-full bg-base-100/50 mt-1"
-                                    readOnly
-                                />
+                <h3 className="font-bold text-2xl sm:text-3xl text-gray-800">
+                    অর্ডার কনফার্মেশন
+                </h3>
+                <p className="text-gray-500 text-sm mt-1">আপনার অর্ডারটি সম্পূর্ণ করতে নিচের তথ্য পূরণ করুন</p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Customer Info Section */}
+                    <div className="bg-white/80 backdrop-blur-sm p-5 rounded-2xl border border-orange-100 shadow-lg hover:shadow-xl transition-all duration-300">
+                        <div className="flex items-center gap-2 mb-4 pb-2 border-b border-orange-200">
+                            <div className="w-8 h-8 rounded-full bg-linear-to-r from-orange-600 to-orange-500 flex items-center justify-center">
+                                <IoPersonOutline className="text-white text-sm" />
                             </div>
-                            <div>
-                                <label className="label-text font-medium">প্রতি পিস মূল্য</label>
+                            <h4 className="font-semibold text-lg text-gray-800">প্রাপকের তথ্য</h4>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="form-control">
+                                <label className="label">
+                                    <span className="label-text font-medium flex items-center gap-1">
+                                        <IoPersonOutline className="text-orange-500" />
+                                        পূর্ণ নাম *
+                                    </span>
+                                </label>
                                 <input
                                     type="text"
-                                    value={`৳${formData.productPrice}`}
-                                    className="input input-bordered w-full bg-base-100/50 mt-1"
-                                    readOnly
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleInputChange}
+                                    placeholder="আপনার নাম লিখুন"
+                                    className="input input-bordered rounded-xl focus:border-orange-500 focus:ring-orange-500 transition-all"
+                                    required
                                 />
                             </div>
 
-                            {/* কোয়ান্টিটি */}
-                            <div>
-                                <label className="label-text font-medium">পরিমাণ</label>
-                                <div className="flex items-center gap-2 mt-1">
-                                    <button
-                                        type="button"
-                                        onClick={decrementQuantity}
-                                        className="btn btn-square btn-sm btn-outline"
-                                    >
-                                        -
-                                    </button>
-                                    <input
-                                        type="number"
-                                        name="quantity"
-                                        value={formData.quantity}
-                                        onChange={handleQuantityChange}
-                                        className="input input-bordered w-20 text-center"
-                                        min="1"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={incrementQuantity}
-                                        className="btn btn-square btn-sm btn-outline"
-                                    >
-                                        +
-                                    </button>
+                            <div className="form-control">
+                                <label className="label">
+                                    <span className="label-text font-medium flex items-center gap-1">
+                                        <IoMailOutline className="text-orange-500" />
+                                        ইমেইল *
+                                    </span>
+                                </label>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleInputChange}
+                                    placeholder="your@email.com"
+                                    className="input input-bordered rounded-xl focus:border-orange-500 focus:ring-orange-500 transition-all"
+                                    required
+                                />
+                            </div>
+
+                            <div className="form-control">
+                                <label className="label">
+                                    <span className="label-text font-medium flex items-center gap-1">
+                                        <IoCallOutline className="text-orange-500" />
+                                        মোবাইল নম্বর *
+                                    </span>
+                                </label>
+                                <input
+                                    type="tel"
+                                    name="phone"
+                                    value={formData.phone}
+                                    onChange={handleInputChange}
+                                    placeholder="01XXXXXXXXX"
+                                    className="input input-bordered rounded-xl focus:border-orange-500 focus:ring-orange-500 transition-all"
+                                    required
+                                />
+                            </div>
+
+                            <div className="form-control">
+                                <label className="label">
+                                    <span className="label-text font-medium flex items-center gap-1">
+                                        <IoBusinessOutline className="text-orange-500" />
+                                        বিভাগ *
+                                    </span>
+                                </label>
+                                <select
+                                    name="division"
+                                    value={formData.division}
+                                    onChange={handleInputChange}
+                                    className="select select-bordered rounded-xl focus:border-orange-500 focus:ring-orange-500 transition-all"
+                                    required
+                                >
+                                    <option value="">বিভাগ নির্বাচন করুন</option>
+                                    {divisions.map(div => (
+                                        <option key={div.id} value={div.name}>
+                                            {div.bn_name} - {div.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="form-control">
+                                <label className="label">
+                                    <span className="label-text font-medium flex items-center gap-1">
+                                        <IoLocationOutline className="text-orange-500" />
+                                        জেলা *
+                                    </span>
+                                </label>
+                                <select
+                                    name="district"
+                                    value={formData.district}
+                                    onChange={handleInputChange}
+                                    className="select select-bordered rounded-xl focus:border-orange-500 focus:ring-orange-500 transition-all"
+                                    required
+                                    disabled={!formData.division}
+                                >
+                                    <option value="">জেলা নির্বাচন করুন</option>
+                                    {getDistrictsForSelectedDivision().map((district, index) => (
+                                        <option key={index} value={district.name}>
+                                            {district.bn_name} - {district.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="form-control">
+                                <label className="label">
+                                    <span className="label-text font-medium flex items-center gap-1">
+                                        <IoCashOutline className="text-orange-500" />
+                                        পেমেন্ট মেথড *
+                                    </span>
+                                </label>
+                                <select
+                                    name="paymentMethod"
+                                    value={formData.paymentMethod}
+                                    onChange={handleInputChange}
+                                    className="select select-bordered rounded-xl focus:border-orange-500 focus:ring-orange-500 transition-all"
+                                    required
+                                >
+                                    <option value="cod">💵 ক্যাশ অন ডেলিভারি</option>
+                                </select>
+                            </div>
+
+                            <div className="form-control md:col-span-2">
+                                <label className="label">
+                                    <span className="label-text font-medium flex items-center gap-1">
+                                        <IoLocationOutline className="text-orange-500" />
+                                        পূর্ণ ঠিকানা *
+                                    </span>
+                                </label>
+                                <textarea
+                                    name="address"
+                                    value={formData.address}
+                                    onChange={handleInputChange}
+                                    placeholder="আপনার বিস্তারিত ঠিকানা"
+                                    className="textarea textarea-bordered rounded-xl focus:border-orange-500 focus:ring-orange-500 transition-all"
+                                    rows="2"
+                                    required
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Product & Price Section */}
+                    <div className="space-y-6">
+                        {/* Product Info */}
+                        <div className="bg-linear-to-r from-orange-50 to-white p-5 rounded-2xl border border-orange-100 shadow-lg">
+                            <div className="flex items-center gap-2 mb-4 pb-2 border-b border-orange-200">
+                                <div className="w-8 h-8 rounded-full bg-linear-to-r from-orange-600 to-orange-500 flex items-center justify-center">
+                                    <IoCubeOutline className="text-white text-sm" />
+                                </div>
+                                <h4 className="font-semibold text-lg text-gray-800">প্রোডাক্টের বিবরণ</h4>
+                            </div>
+
+                            <div className="space-y-3">
+                                <div>
+                                    <label className="label-text font-medium text-gray-600">প্রোডাক্টের নাম</label>
+                                    <div className="bg-orange-100/50 p-3 rounded-xl mt-1 border border-orange-200">
+                                        <p className="font-medium text-gray-800">{formData.productName}</p>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="label-text font-medium text-gray-600">প্রতি পিস মূল্য</label>
+                                        <div className="bg-orange-100/50 p-3 rounded-xl mt-1 border border-orange-200">
+                                            <p className="font-bold text-orange-600 text-lg">৳{formData.productPrice}</p>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="label-text font-medium text-gray-600">পরিমাণ</label>
+                                        <div className="flex items-center gap-2 mt-1">
+                                            <button
+                                                type="button"
+                                                onClick={decrementQuantity}
+                                                className="w-8 h-8 rounded-full bg-orange-600 text-white hover:bg-orange-700 transition-all flex items-center justify-center font-bold"
+                                            >
+                                                -
+                                            </button>
+                                            <input
+                                                type="number"
+                                                name="quantity"
+                                                value={formData.quantity}
+                                                onChange={handleQuantityChange}
+                                                className="input input-bordered w-20 text-center rounded-xl focus:border-orange-500"
+                                                min="1"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={incrementQuantity}
+                                                className="w-8 h-8 rounded-full bg-orange-600 text-white hover:bg-orange-700 transition-all flex items-center justify-center font-bold"
+                                            >
+                                                +
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    {/* প্রাইস ক্যালকুলেশন */}
-                    <div className="bg-primary/5 p-5 rounded-xl border border-primary/20">
-                        <h4 className="font-semibold mb-3 text-lg">মূল্যের বিবরণ</h4>
-                        <div className="space-y-2">
-                            <div className="flex justify-between text-sm">
-                                <span>সাবটোটাল ({formData.quantity} × ৳{formData.productPrice})</span>
-                                <span className="font-medium">৳{subtotal}</span>
+
+                        {/* Price Calculation */}
+                        <div className="bg-linear-to-r from-orange-600 to-orange-500 p-5 rounded-2xl shadow-xl text-white">
+                            <div className="flex items-center gap-2 mb-4 pb-2 border-b border-orange-300">
+                                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                                    <IoPricetagOutline className="text-white text-sm" />
+                                </div>
+                                <h4 className="font-semibold text-lg">মূল্যের বিবরণ</h4>
                             </div>
-                            <div className="flex justify-between text-sm">
-                                <span>ডেলিভারি চার্জ</span>
-                                <span className="font-medium">৳{deliveryCharge}</span>
+
+                            <div className="space-y-3">
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-orange-100">সাবটোটাল ({formData.quantity} × ৳{formData.productPrice})</span>
+                                    <span className="font-medium text-white">৳{subtotal}</span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-orange-100">ডেলিভারি চার্জ</span>
+                                    <span className="font-medium text-white">৳{deliveryCharge}</span>
+                                </div>
+                                <div className="border-t border-orange-300 my-2"></div>
+                                <div className="flex justify-between font-bold text-xl">
+                                    <span className="text-white">সর্বমোট</span>
+                                    <span className="text-white bg-white/20 px-3 py-1 rounded-full">৳{totalPrice}</span>
+                                </div>
+                                {formData.division && (
+                                    <p className="text-xs text-orange-100 mt-2 bg-white/10 p-2 rounded-lg">
+                                        📦 {formData.division === 'Dhaka' ? 'ঢাকার ভিতর' : 'ঢাকার বাইরে'} ডেলিভারি চার্জ: ৳{deliveryCharge}
+                                    </p>
+                                )}
                             </div>
-                            <div className="divider my-1"></div>
-                            <div className="flex justify-between font-bold text-xl">
-                                <span>সর্বমোট</span>
-                                <span className="text-primary">৳{totalPrice}</span>
-                            </div>
-                            {formData.division && (
-                                <p className="text-xs text-base-content/70 mt-1 bg-base-200 p-2 rounded">
-                                    * {formData.division === 'Dhaka' ? 'ঢাকার ভিতর' : 'ঢাকার বাইরে'} ডেলিভারি চার্জ: ৳{deliveryCharge}
-                                </p>
-                            )}
                         </div>
                     </div>
                 </div>
-                {
-                    isSubmitting ? <p>Please</p> :
 
-                        <div className="mt-6">
-                            <button
-                                type="submit"
-                                className="btn btn-primary btn-block text-lg py-3"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
+                {/* Submit Button */}
+                <div className="mt-6">
+                    <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className={`
+                            w-full py-4 rounded-xl font-bold text-lg text-white transition-all duration-300
+                            flex items-center justify-center gap-2
+                            ${isSubmitting
+                                ? 'bg-gray-400 cursor-not-allowed'
+                                : 'bg-linear-to-r from-orange-600 to-orange-500 hover:shadow-2xl hover:scale-[1.02] active:scale-98'
+                            }
+                        `}
+                    >
+                        {isSubmitting ? (
+                            <>
+                                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                প্রক্রিয়াকরণ...
+                            </>
+                        ) : (
+                            <>
+                                <IoCheckmarkCircleOutline className="text-xl" />
                                 অর্ডার কনফার্ম করুন
-                            </button>
-                        </div>
-                }
+                                <IoArrowForwardOutline className="text-xl" />
+                            </>
+                        )}
+                    </button>
+                </div>
             </form>
         </div>
     );

@@ -93,7 +93,7 @@ export default function Navbar() {
                             <li>
                                 <Link
                                     href="/my-cart"
-                                    className={getLinkClass('/my-card')}
+                                    className={getLinkClass('/my-cart')}
                                 >
                                     Cart
                                 </Link>
@@ -101,7 +101,7 @@ export default function Navbar() {
                             <li>
                                 <Link
                                     href="/about"
-                                    className={getLinkClass('/contact')}
+                                    className={getLinkClass('/about')}
                                 >
                                     About
                                 </Link>

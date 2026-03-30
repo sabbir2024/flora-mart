@@ -5,6 +5,25 @@ import { useState } from 'react';
 import Swal from 'sweetalert2';
 import { useRouter } from 'next/navigation';
 import { apiUrl } from '../../../components/url';
+import {
+    IoCheckmarkCircle,
+    IoTimeOutline,
+    IoRocketOutline,
+    IoSendOutline,
+    IoCloseCircleOutline,
+    IoLocationOutline,
+    IoCallOutline,
+    IoMailOutline,
+    IoCalendarOutline,
+    IoCashOutline,
+    IoCartOutline,
+    IoEyeOutline,
+    IoTrashOutline,
+    IoArrowUpOutline,
+    IoArrowDownOutline,
+    IoGridOutline,
+    IoListOutline
+} from 'react-icons/io5';
 
 export default function Mycard({ bookings }) {
     const router = useRouter();
@@ -12,9 +31,6 @@ export default function Mycard({ bookings }) {
     const [sortBy, setSortBy] = useState('newest');
     const [viewMode, setViewMode] = useState('table');
 
-
-
-    // সব সিলেক্ট/ডিসিলেক্ট
     const toggleSelectAll = () => {
         if (selectedBookings.length === bookings.length) {
             setSelectedBookings([]);
@@ -23,7 +39,6 @@ export default function Mycard({ bookings }) {
         }
     };
 
-    // সিঙ্গেল সিলেক্ট/ডিসিলেক্ট
     const toggleSelect = (id) => {
         if (selectedBookings.includes(id)) {
             setSelectedBookings(selectedBookings.filter(bId => bId !== id));
@@ -32,51 +47,49 @@ export default function Mycard({ bookings }) {
         }
     };
 
-    // স্ট্যাটাস অনুযায়ী ব্যাজ কালার
     const getStatusBadge = (status) => {
-        switch (status) {
-            case 'pending':
-                return <span className="badge badge-warning badge-sm md:badge-md gap-1">⏳ পেন্ডিং</span>;
-            case 'processing':
-                return <span className="badge badge-info badge-sm md:badge-md gap-1">⚙️ প্রসেসিং</span>;
-            case 'shipped':
-                return <span className="badge badge-primary badge-sm md:badge-md gap-1">🚚 পাঠানো হয়েছে</span>;
-            case 'delivered':
-                return <span className="badge badge-success badge-sm md:badge-md gap-1">✅ ডেলিভারি সম্পন্ন</span>;
-            case 'cancelled':
-                return <span className="badge badge-error badge-sm md:badge-md gap-1">❌ বাতিল</span>;
-            default:
-                return <span className="badge badge-ghost badge-sm md:badge-md gap-1">{status}</span>;
-        }
+        const statusConfig = {
+            pending: { icon: <IoTimeOutline />, color: 'bg-amber-100 text-amber-700 border-amber-200', text: 'পেন্ডিং' },
+            processing: { icon: <IoRocketOutline />, color: 'bg-blue-100 text-blue-700 border-blue-200', text: 'প্রসেসিং' },
+            shipped: { icon: <IoSendOutline />, color: 'bg-orange-100 text-orange-700 border-orange-200', text: 'পাঠানো হয়েছে' },
+            delivered: { icon: <IoCheckmarkCircle />, color: 'bg-green-100 text-green-700 border-green-200', text: 'ডেলিভারি সম্পন্ন' },
+            cancelled: { icon: <IoCloseCircleOutline />, color: 'bg-red-100 text-red-700 border-red-200', text: 'বাতিল' }
+        };
+        const config = statusConfig[status] || { icon: null, color: 'bg-gray-100 text-gray-700 border-gray-200', text: status };
+
+        return (
+            <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${config.color}`}>
+                {config.icon}
+                <span>{config.text}</span>
+            </span>
+        );
     };
 
-    // ডেলিভারি চার্জের জোন
     const getDeliveryZone = (charge) => {
-        switch (charge) {
-            case 60: return 'ঢাকা শহর';
-            case 80: return 'ঢাকা মেট্রো';
-            case 100: return 'সিটি কর্পোরেশন';
-            case 120: return 'নিকটবর্তী জেলা';
-            case 150: return 'সাধারণ জেলা';
-            default: return 'অন্যান্য';
-        }
+        const zones = {
+            60: { name: 'ঢাকা শহর', icon: '🏙️', color: 'text-emerald-600 bg-emerald-50' },
+            80: { name: 'ঢাকা মেট্রো', icon: '🚇', color: 'text-blue-600 bg-blue-50' },
+            100: { name: 'সিটি কর্পোরেশন', icon: '🏛️', color: 'text-purple-600 bg-purple-50' },
+            120: { name: 'নিকটবর্তী জেলা', icon: '🚌', color: 'text-amber-600 bg-amber-50' },
+            150: { name: 'সাধারণ জেলা', icon: '🚚', color: 'text-orange-600 bg-orange-50' }
+        };
+        const zone = zones[charge] || { name: 'অন্যান্য', icon: '📍', color: 'text-gray-600 bg-gray-50' };
+        return (
+            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs ${zone.color}`}>
+                <span>{zone.icon}</span>
+                <span>{zone.name}</span>
+            </span>
+        );
     };
 
-    // ডাটা সর্ট করা
     const sortedBookings = [...bookings].sort((a, b) => {
-        if (sortBy === 'newest') {
-            return new Date(b.order_date) - new Date(a.order_date);
-        } else if (sortBy === 'oldest') {
-            return new Date(a.order_date) - new Date(b.order_date);
-        } else if (sortBy === 'highest') {
-            return b.total_price - a.total_price;
-        } else if (sortBy === 'lowest') {
-            return a.total_price - b.total_price;
-        }
+        if (sortBy === 'newest') return new Date(b.order_date) - new Date(a.order_date);
+        if (sortBy === 'oldest') return new Date(a.order_date) - new Date(b.order_date);
+        if (sortBy === 'highest') return b.total_price - a.total_price;
+        if (sortBy === 'lowest') return a.total_price - b.total_price;
         return 0;
     });
 
-    // টাকার ফরম্যাট
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('bn-BD', {
             style: 'currency',
@@ -85,7 +98,6 @@ export default function Mycard({ bookings }) {
         }).format(amount);
     };
 
-    // ডেট ফরম্যাট
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return date.toLocaleDateString('bn-BD', {
@@ -97,64 +109,63 @@ export default function Mycard({ bookings }) {
         });
     };
 
-    // ডেলিভারি ঠিকানা ফরম্যাট
     const formatAddress = (booking) => {
-        return `${booking.delivery_address}, ${booking.area ? booking.area + ', ' : ''}${booking.district}, ${booking.division} - ${booking.postal_code}`;
+        return `${booking.delivery_address}, ${booking.area ? booking.area + ', ' : ''}${booking.district}, ${booking.division}`;
     };
 
-    // অর্ডার ডিটেইলস দেখানোর ফাংশন
     const showOrderDetails = (booking) => {
         Swal.fire({
             title: 'অর্ডারের বিস্তারিত',
             html: `
                 <div class="text-left text-sm max-h-96 overflow-y-auto">
-                    <div class="grid grid-cols-2 gap-2 mb-2 pb-2 border-b">
-                        <span class="font-semibold">অর্ডার আইডি:</span>
-                        <span class="text-xs">${booking._id.slice(-8)}</span>
+                    <div class="bg-orange-50 p-3 rounded-lg mb-3">
+                        <div class="grid grid-cols-2 gap-2">
+                            <span class="font-semibold text-orange-600">অর্ডার আইডি:</span>
+                            <span class="font-mono text-xs">${booking._id.slice(-8)}</span>
+                        </div>
                     </div>
                     <div class="grid grid-cols-2 gap-2 mb-2">
-                        <span class="font-semibold">নাম:</span>
+                        <span class="font-semibold flex items-center gap-1"><span>👤</span> নাম:</span>
                         <span>${booking.customer_name}</span>
                     </div>
                     <div class="grid grid-cols-2 gap-2 mb-2">
-                        <span class="font-semibold">ফোন:</span>
+                        <span class="font-semibold flex items-center gap-1"><span>📞</span> ফোন:</span>
                         <span>${booking.customer_phone}</span>
                     </div>
                     <div class="grid grid-cols-2 gap-2 mb-2">
-                        <span class="font-semibold">ইমেইল:</span>
+                        <span class="font-semibold flex items-center gap-1"><span>📧</span> ইমেইল:</span>
                         <span class="text-xs">${booking.customer_email}</span>
                     </div>
                     <div class="grid grid-cols-2 gap-2 mb-2">
-                        <span class="font-semibold">ঠিকানা:</span>
+                        <span class="font-semibold flex items-center gap-1"><span>📍</span> ঠিকানা:</span>
                         <span class="text-xs">${formatAddress(booking)}</span>
                     </div>
-                    <div class="grid grid-cols-2 gap-2 mb-2">
-                        <span class="font-semibold">পণ্য:</span>
-                        <span class="text-xs">${booking.product_name}</span>
+                    <div class="bg-gray-50 p-2 rounded-lg my-2">
+                        <div class="font-semibold text-orange-600 mb-1">📦 পণ্যের বিবরণ</div>
+                        <div class="text-xs">${booking.product_name}</div>
+                        <div class="flex justify-between mt-1">
+                            <span>পরিমাণ: ${booking.quantity}</span>
+                            <span>প্রতি পিস: ৳${booking.product_price}</span>
+                        </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-2 mb-2">
-                        <span class="font-semibold">পরিমাণ:</span>
-                        <span>${booking.quantity}</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2 mb-2">
-                        <span class="font-semibold">প্রতি পিস:</span>
-                        <span>৳${booking.product_price}</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2 mb-2">
-                        <span class="font-semibold">ডেলিভারি:</span>
-                        <span>৳${booking.delivery_charge}</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2 mb-2 font-bold text-success">
-                        <span>মোট মূল্য:</span>
-                        <span>৳${booking.total_price}</span>
+                    <div class="bg-orange-50 p-2 rounded-lg my-2">
+                        <div class="flex justify-between text-sm">
+                            <span>সাবটোটাল:</span>
+                            <span>৳${booking.quantity * booking.product_price}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span>ডেলিভারি চার্জ:</span>
+                            <span>৳${booking.delivery_charge}</span>
+                        </div>
+                        <div class="border-t border-orange-200 my-2"></div>
+                        <div class="flex justify-between font-bold text-orange-600">
+                            <span>মোট মূল্য:</span>
+                            <span>৳${booking.total_price}</span>
+                        </div>
                     </div>
                     <div class="grid grid-cols-2 gap-2 mb-2">
                         <span class="font-semibold">পেমেন্ট:</span>
-                        <span>${booking.payment_method === 'cod' ? 'ক্যাশ অন ডেলিভারি' : booking.payment_method}</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2 mb-2">
-                        <span class="font-semibold">স্ট্যাটাস:</span>
-                        <span>${booking.order_status}</span>
+                        <span>${booking.payment_method === 'cod' ? '💵 ক্যাশ অন ডেলিভারি' : booking.payment_method}</span>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <span class="font-semibold">অর্ডারের তারিখ:</span>
@@ -163,62 +174,60 @@ export default function Mycard({ bookings }) {
                 </div>
             `,
             confirmButtonText: 'ঠিক আছে',
-            confirmButtonColor: '#3085d6',
-            width: '90%'
+            confirmButtonColor: '#ea580c',
+            width: '90%',
+            customClass: {
+                popup: 'rounded-2xl',
+                confirmButton: 'bg-orange-600 hover:bg-orange-700 rounded-full px-6'
+            }
         });
     };
 
-    // ডিলিট কনফার্মেশন
     const confirmDelete = async (id) => {
         Swal.fire({
             title: 'অর্ডার বাতিল করুন?',
             text: "আপনি কি এই অর্ডারটি বাতিল করতে চান?",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
+            confirmButtonColor: '#ea580c',
+            cancelButtonColor: '#6b7280',
             confirmButtonText: 'হ্যাঁ, বাতিল করুন',
-            cancelButtonText: 'না, ফিরে যান'
+            cancelButtonText: 'না, ফিরে যান',
+            customClass: {
+                popup: 'rounded-2xl',
+                confirmButton: 'bg-orange-600 hover:bg-orange-700 rounded-full px-6',
+                cancelButton: 'rounded-full px-6'
+            }
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    // ⭐ URL এ id পাথ হিসেবে দিন (query parameter না)
                     const response = await fetch(`${apiUrl}/my-cart/${id}`, {
                         method: "PUT",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                            order_status: "cancelled"
-                        })
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ order_status: "cancelled" })
                     });
 
-                    console.log('Response status:', response.status);
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
                     const data = await response.json();
 
                     if (data.success) {
-                        Swal.fire(
-                            'বাতিল করা হয়েছে!',
-                            'আপনার অর্ডারটি বাতিল করা হয়েছে।',
-                            'success'
-                        );
+                        Swal.fire({
+                            title: 'বাতিল করা হয়েছে!',
+                            text: 'আপনার অর্ডারটি বাতিল করা হয়েছে।',
+                            icon: 'success',
+                            confirmButtonColor: '#ea580c',
+                            customClass: { popup: 'rounded-2xl', confirmButton: 'bg-orange-600 rounded-full px-6' }
+                        });
                         router.refresh();
                     }
-
                 } catch (error) {
                     console.error('Delete error:', error);
                     Swal.fire({
-                        position: "center",
                         icon: "error",
                         title: "সমস্যা হয়েছে!",
                         text: error?.message || "নেটওয়ার্ক সমস্যা। দয়া করে আবার চেষ্টা করুন।",
-                        showConfirmButton: true,
-                        confirmButtonText: "ঠিক আছে"
+                        confirmButtonColor: "#ea580c"
                     });
                 }
             }
@@ -228,14 +237,17 @@ export default function Mycard({ bookings }) {
     if (!bookings || bookings.length === 0) {
         return (
             <div className="min-h-[60vh] flex items-center justify-center p-4">
-                <div className="text-center bg-base-200 p-6 md:p-10 rounded-2xl w-full max-w-md">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-16 md:h-24 w-16 md:w-24 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                    </svg>
-                    <h2 className="text-xl md:text-2xl font-bold mb-2">কোন বুকিং পাওয়া যায়নি</h2>
-                    <p className="text-sm md:text-base text-gray-600 mb-4">আপনার এখনও কোন অর্ডার নেই</p>
-                    <button className="btn btn-primary btn-sm md:btn-md" onClick={() => router.push('/')}>
-                        শপিং করুন
+                <div className="text-center bg-linear-to-br from-white to-orange-50/30 p-6 md:p-10 rounded-2xl shadow-xl w-full max-w-md border border-orange-100">
+                    <div className="w-20 h-20 mx-auto bg-linear-to-r from-orange-600 to-orange-500 rounded-full flex items-center justify-center mb-4 shadow-lg">
+                        <IoCartOutline className="text-4xl text-white" />
+                    </div>
+                    <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-2">কোন অর্ডার পাওয়া যায়নি</h2>
+                    <p className="text-sm md:text-base text-gray-500 mb-6">আপনার এখনও কোন অর্ডার নেই</p>
+                    <button
+                        className="px-6 py-3 bg-linear-to-r from-orange-600 to-orange-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all hover:scale-105"
+                        onClick={() => router.push('/')}
+                    >
+                        শপিং শুরু করুন
                     </button>
                 </div>
             </div>
@@ -243,121 +255,131 @@ export default function Mycard({ bookings }) {
     }
 
     return (
-        <div className="space-y-3 md:space-y-4 p-2 md:p-0">
-            {/* হেডার ও কন্ট্রোল */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-base-200 p-3 md:p-4 rounded-xl">
-                <div>
-                    <h2 className="text-lg md:text-2xl font-bold">আমার অর্ডারসমূহ</h2>
-                    <p className="text-xs md:text-sm opacity-70">মোট {bookings.length} টি অর্ডার</p>
-                </div>
-
-                <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-                    <select
-                        className="select select-bordered select-xs md:select-sm flex-1 sm:flex-none"
-                        value={sortBy}
-                        onChange={(e) => setSortBy(e.target.value)}
-                    >
-                        <option value="newest">সর্বশেষ</option>
-                        <option value="oldest">পুরাতন</option>
-                        <option value="highest">সর্বোচ্চ মূল্য</option>
-                        <option value="lowest">সর্বনিম্ন মূল্য</option>
-                    </select>
-
-                    {/* ভিউ টগল (মোবাইলে) */}
-                    <div className="join md:hidden">
-                        <button
-                            className={`join-item btn btn-xs ${viewMode === 'card' ? 'btn-active' : ''}`}
-                            onClick={() => setViewMode('card')}
-                        >
-                            কার্ড
-                        </button>
-                        <button
-                            className={`join-item btn btn-xs ${viewMode === 'table' ? 'btn-active' : ''}`}
-                            onClick={() => setViewMode('table')}
-                        >
-                            তালিকা
-                        </button>
+        <div className="space-y-4 p-2 md:p-0">
+            {/* Header & Controls */}
+            <div className="bg-linear-to-r from-orange-600 to-orange-500 rounded-2xl p-4 md:p-6 text-white shadow-xl">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h2 className="text-xl md:text-2xl font-bold flex items-center gap-2">
+                            <IoCartOutline className="text-2xl" />
+                            আমার অর্ডারসমূহ
+                        </h2>
+                        <p className="text-sm text-orange-100 mt-1">মোট {bookings.length} টি অর্ডার</p>
                     </div>
 
-                    {selectedBookings.length > 0 && (
-                        <button className="btn btn-error btn-xs md:btn-sm">
-                            ডিলিট ({selectedBookings.length})
-                        </button>
-                    )}
+                    <div className="flex flex-wrap gap-2">
+                        <select
+                            className="select select-sm bg-white/20 border-white/30 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-white/50"
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value)}
+                        >
+                            <option value="newest" className="text-gray-800">সর্বশেষ</option>
+                            <option value="oldest" className="text-gray-800">পুরাতন</option>
+                            <option value="highest" className="text-gray-800">সর্বোচ্চ মূল্য</option>
+                            <option value="lowest" className="text-gray-800">সর্বনিম্ন মূল্য</option>
+                        </select>
+
+                        <div className="join bg-white/20 rounded-xl">
+                            <button
+                                className={`join-item btn btn-sm ${viewMode === 'card' ? 'bg-white text-orange-600' : 'bg-transparent text-white'}`}
+                                onClick={() => setViewMode('card')}
+                            >
+                                <IoGridOutline />
+                            </button>
+                            <button
+                                className={`join-item btn btn-sm ${viewMode === 'table' ? 'bg-white text-orange-600' : 'bg-transparent text-white'}`}
+                                onClick={() => setViewMode('table')}
+                            >
+                                <IoListOutline />
+                            </button>
+                        </div>
+
+                        {selectedBookings.length > 0 && (
+                            <button className="btn btn-sm bg-red-500 border-0 text-white hover:bg-red-600 rounded-xl">
+                                <IoTrashOutline />
+                                {selectedBookings.length}
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
 
-            {/* মোবাইল কার্ড ভিউ */}
+            {/* Mobile Card View */}
             <div className={`block md:hidden ${viewMode === 'card' ? 'block' : 'hidden'}`}>
-                <div className="space-y-3">
+                <div className="space-y-4">
                     {sortedBookings.map((booking, index) => (
-                        <div key={booking._id} className="card bg-base-100 shadow-lg border">
-                            <div className="card-body p-4">
-                                {/* হেডার */}
-                                <div className="flex justify-between items-start">
+                        <div key={booking._id} className="bg-white rounded-2xl shadow-lg border border-orange-100 overflow-hidden hover:shadow-xl transition-shadow">
+                            <div className="p-4">
+                                {/* Header */}
+                                <div className="flex justify-between items-start mb-3">
                                     <div className="flex items-center gap-2">
                                         <input
                                             type="checkbox"
-                                            className="checkbox checkbox-sm"
+                                            className="checkbox checkbox-sm rounded border-orange-300 checked:bg-orange-600"
                                             checked={selectedBookings.includes(booking._id)}
                                             onChange={() => toggleSelect(booking._id)}
                                         />
-                                        <span className="font-bold text-primary">#{index + 1}</span>
+                                        <span className="font-bold text-orange-600 bg-orange-50 px-2 py-1 rounded-lg text-sm">
+                                            #{index + 1}
+                                        </span>
                                     </div>
                                     {getStatusBadge(booking.order_status)}
                                 </div>
 
-                                {/* কাস্টমারের তথ্য */}
-                                <div className="mt-2 space-y-1 text-sm">
-                                    <div className="font-semibold">{booking.customer_name}</div>
-                                    <div className="flex items-center gap-2 text-xs opacity-70">
-                                        <span>📞 {booking.customer_phone}</span>
-                                        <span>📧 {booking.customer_email}</span>
+                                {/* Customer Info */}
+                                <div className="mb-3">
+                                    <h3 className="font-semibold text-gray-800">{booking.customer_name}</h3>
+                                    <div className="flex flex-wrap gap-3 text-xs text-gray-500 mt-1">
+                                        <span className="flex items-center gap-1"><IoCallOutline /> {booking.customer_phone}</span>
+                                        <span className="flex items-center gap-1"><IoMailOutline /> {booking.customer_email}</span>
                                     </div>
                                 </div>
 
-                                {/* পণ্যের তথ্য */}
-                                <div className="mt-2 bg-base-200 p-2 rounded-lg">
-                                    <div className="font-medium text-sm">{booking.product_name}</div>
-                                    <div className="flex justify-between items-center mt-1 text-xs">
-                                        <span>পরিমাণ: <span className="font-bold">{booking.quantity}</span></span>
+                                {/* Product Info */}
+                                <div className="bg-orange-50 rounded-xl p-3 mb-3">
+                                    <p className="font-medium text-gray-800 text-sm">{booking.product_name}</p>
+                                    <div className="flex justify-between items-center mt-2 text-sm">
+                                        <span>পরিমাণ: <span className="font-bold text-orange-600">{booking.quantity}</span></span>
                                         <span>প্রতি পিস: ৳{booking.product_price}</span>
                                     </div>
                                 </div>
 
-                                {/* মূল্য */}
-                                <div className="flex justify-between items-center mt-2">
+                                {/* Price */}
+                                <div className="flex justify-between items-center mb-3">
                                     <div>
-                                        <span className="text-xs opacity-70">ডেলিভারি: ৳{booking.delivery_charge}</span>
-                                        <span className="badge badge-ghost badge-xs ml-2">
-                                            {getDeliveryZone(booking.delivery_charge)}
-                                        </span>
+                                        <span className="text-xs text-gray-500">ডেলিভারি: ৳{booking.delivery_charge}</span>
+                                        <div className="mt-1">{getDeliveryZone(booking.delivery_charge)}</div>
                                     </div>
-                                    <div className="font-bold text-success">৳{booking.total_price}</div>
+                                    <div className="text-right">
+                                        <div className="text-sm text-gray-500">মোট মূল্য</div>
+                                        <div className="text-xl font-bold text-orange-600">৳{booking.total_price}</div>
+                                    </div>
                                 </div>
 
-                                {/* ঠিকানা */}
-                                <div className="text-xs opacity-70 mt-1">
-                                    📍 {formatAddress(booking).substring(0, 50)}...
+                                {/* Address */}
+                                <div className="text-xs text-gray-500 mb-3 flex items-start gap-1">
+                                    <IoLocationOutline className="mt-0.5 shrink-0" />
+                                    <span>{formatAddress(booking)}</span>
                                 </div>
 
-                                {/* তারিখ ও অ্যাকশন */}
-                                <div className="flex justify-between items-center mt-3 pt-2 border-t">
-                                    <div className="text-xs opacity-50">
+                                {/* Date & Actions */}
+                                <div className="flex justify-between items-center pt-3 border-t border-gray-100">
+                                    <div className="flex items-center gap-1 text-xs text-gray-400">
+                                        <IoCalendarOutline />
                                         {formatDate(booking.order_date)}
                                     </div>
-                                    <div className="flex gap-1">
+                                    <div className="flex gap-2">
                                         <button
-                                            className="btn btn-ghost btn-xs"
+                                            className="px-3 py-1.5 text-xs font-medium text-orange-600 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors flex items-center gap-1"
                                             onClick={() => showOrderDetails(booking)}
                                         >
-                                            বিস্তারিত
+                                            <IoEyeOutline /> বিস্তারিত
                                         </button>
                                         <button
-                                            className="btn btn-ghost btn-xs text-error"
+                                            className="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors flex items-center gap-1"
                                             onClick={() => confirmDelete(booking._id)}
                                         >
-                                            বাতিল
+                                            <IoTrashOutline /> বাতিল
                                         </button>
                                     </div>
                                 </div>
@@ -367,125 +389,110 @@ export default function Mycard({ bookings }) {
                 </div>
             </div>
 
-            {/* টেবিল ভিউ (ডেস্কটপ + মোবাইলের জন্য) */}
-            <div className={`${viewMode === 'table' ? 'block' : 'hidden md:block'} overflow-x-auto bg-base-100 rounded-xl shadow-lg`}>
-                <div className="min-w-250 md:min-w-full">
-                    <table className="table table-zebra table-xs md:table-md">
-                        {/* হেড */}
-                        <thead className="bg-base-200">
-                            <tr>
-                                <th className="w-8">
+            {/* Table View */}
+            <div className={`${viewMode === 'table' ? 'block' : 'hidden md:block'} overflow-x-auto bg-white rounded-2xl shadow-xl border border-orange-100`}>
+                <table className="table table-zebra w-full">
+                    <thead className="bg-linear-to-r from-orange-50 to-orange-100/50">
+                        <tr className="text-gray-700">
+                            <th className="w-8">
+                                <input
+                                    type="checkbox"
+                                    className="checkbox checkbox-sm rounded border-orange-300 checked:bg-orange-600"
+                                    checked={selectedBookings.length === bookings.length}
+                                    onChange={toggleSelectAll}
+                                />
+                            </th>
+                            <th className="text-sm">ক্রমিক</th>
+                            <th className="text-sm">অর্ডার বিবরণ</th>
+                            <th className="text-sm">পণ্যের তথ্য</th>
+                            <th className="text-sm">পরিমাণ</th>
+                            <th className="text-sm">মূল্য</th>
+                            <th className="text-sm hidden lg:table-cell">ডেলিভারি</th>
+                            <th className="text-sm">স্ট্যাটাস</th>
+                            <th className="text-sm hidden lg:table-cell">তারিখ</th>
+                            <th className="text-sm">অ্যাকশন</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {sortedBookings.map((booking, index) => (
+                            <tr key={booking._id} className="hover:bg-orange-50/50 transition-colors">
+                                <td>
                                     <input
                                         type="checkbox"
-                                        className="checkbox checkbox-xs md:checkbox-sm"
-                                        checked={selectedBookings.length === bookings.length}
-                                        onChange={toggleSelectAll}
+                                        className="checkbox checkbox-sm rounded border-orange-300 checked:bg-orange-600"
+                                        checked={selectedBookings.includes(booking._id)}
+                                        onChange={() => toggleSelect(booking._id)}
                                     />
-                                </th>
-                                <th className="text-xs md:text-sm">ক্রমিক</th>
-                                <th className="text-xs md:text-sm">অর্ডার বিবরণ</th>
-                                <th className="text-xs md:text-sm">পণ্যের তথ্য</th>
-                                <th className="text-xs md:text-sm">পরিমাণ</th>
-                                <th className="text-xs md:text-sm">মূল্য</th>
-                                <th className="text-xs md:text-sm hidden lg:table-cell">ডেলিভারি</th>
-                                <th className="text-xs md:text-sm">স্ট্যাটাস</th>
-                                <th className="text-xs md:text-sm hidden lg:table-cell">তারিখ</th>
-                                <th className="text-xs md:text-sm">অ্যাকশন</th>
+                                </td>
+                                <td className="font-bold text-orange-600">#{index + 1}</td>
+                                <td>
+                                    <div className="font-semibold text-gray-800">{booking.customer_name}</div>
+                                    <div className="text-xs text-gray-500 flex items-center gap-1"><IoCallOutline /> {booking.customer_phone}</div>
+                                    <div className="text-xs text-gray-400 hidden md:block">{booking.customer_email}</div>
+                                </td>
+                                <td>
+                                    <div className="font-medium text-gray-800">{booking.product_name}</div>
+                                    <div className="text-xs text-orange-600">৳{booking.product_price}</div>
+                                </td>
+                                <td>
+                                    <span className="inline-flex items-center justify-center w-8 h-8 bg-orange-100 text-orange-600 rounded-full font-bold text-sm">
+                                        {booking.quantity}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div className="font-bold text-orange-600">৳{booking.total_price}</div>
+                                    <div className="text-xs text-gray-400 hidden md:block">ডেলিভারি: ৳{booking.delivery_charge}</div>
+                                </td>
+                                <td className="hidden lg:table-cell">
+                                    <div className="text-sm">{booking.district}</div>
+                                    <div className="text-xs text-gray-400">{booking.delivery_address.substring(0, 30)}...</div>
+                                    <div className="mt-1">{getDeliveryZone(booking.delivery_charge)}</div>
+                                </td>
+                                <td>{getStatusBadge(booking.order_status)}</td>
+                                <td className="hidden lg:table-cell">
+                                    <div className="text-xs flex items-center gap-1">
+                                        <IoCalendarOutline />
+                                        {formatDate(booking.order_date)}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div className="flex gap-1">
+                                        <button
+                                            className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                                            title="বিস্তারিত"
+                                            onClick={() => showOrderDetails(booking)}
+                                        >
+                                            <IoEyeOutline />
+                                        </button>
+                                        <button
+                                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                            title="বাতিল"
+                                            onClick={() => confirmDelete(booking._id)}
+                                        >
+                                            <IoTrashOutline />
+                                        </button>
+                                    </div>
+                                </td>
                             </tr>
-                        </thead>
-
-                        <tbody>
-                            {sortedBookings.map((booking, index) => (
-                                <tr key={booking._id} className="hover">
-                                    <th>
-                                        <input
-                                            type="checkbox"
-                                            className="checkbox checkbox-xs md:checkbox-sm"
-                                            checked={selectedBookings.includes(booking._id)}
-                                            onChange={() => toggleSelect(booking._id)}
-                                        />
-                                    </th>
-
-                                    <td className="font-bold text-xs md:text-sm">#{index + 1}</td>
-
-                                    {/* অর্ডার বিবরণ */}
-                                    <td>
-                                        <div className="font-semibold text-xs md:text-sm">{booking.customer_name}</div>
-                                        <div className="text-[10px] md:text-xs opacity-70">{booking.customer_phone}</div>
-                                        <div className="text-[10px] opacity-50 hidden md:block">{booking.customer_email}</div>
-                                    </td>
-
-                                    {/* পণ্যের তথ্য */}
-                                    <td>
-                                        <div className="font-medium text-xs md:text-sm">{booking.product_name}</div>
-                                        <div className="text-[10px] md:text-xs opacity-70">৳{booking.product_price}</div>
-                                    </td>
-
-                                    {/* পরিমাণ */}
-                                    <td>
-                                        <span className="badge badge-primary badge-xs md:badge-sm">{booking.quantity}</span>
-                                    </td>
-
-                                    {/* মূল্য */}
-                                    <td>
-                                        <div className="font-bold text-success text-xs md:text-sm">৳{booking.total_price}</div>
-                                        <div className="text-[10px] opacity-50 hidden md:block">
-                                            ডেলিভারি: ৳{booking.delivery_charge}
-                                        </div>
-                                    </td>
-
-                                    {/* ডেলিভারি তথ্য (লার্জ স্ক্রিন) */}
-                                    <td className="hidden lg:table-cell">
-                                        <div className="text-xs">
-                                            <div>{booking.district}</div>
-                                            <div className="text-[10px] opacity-70">{booking.delivery_address.substring(0, 20)}...</div>
-                                        </div>
-                                    </td>
-
-                                    {/* স্ট্যাটাস */}
-                                    <td>
-                                        {getStatusBadge(booking.order_status)}
-                                    </td>
-
-                                    {/* তারিখ (লার্জ স্ক্রিন) */}
-                                    <td className="hidden lg:table-cell">
-                                        <div className="text-xs">{formatDate(booking.order_date)}</div>
-                                    </td>
-
-                                    {/* অ্যাকশন */}
-                                    <td>
-                                        <div className="flex gap-1">
-                                            <button
-                                                className="btn btn-ghost btn-xs"
-                                                onClick={() => showOrderDetails(booking)}
-                                            >
-                                                বিস্তারিত
-                                            </button>
-                                            <button
-                                                className="btn btn-ghost btn-xs text-error"
-                                                onClick={() => confirmDelete(booking._id)}
-                                            >
-                                                বাতিল
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                        ))}
+                    </tbody>
+                </table>
             </div>
 
-            {/* সারাংশ */}
-            <div className="bg-base-200 p-3 md:p-4 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                <div className="text-sm md:text-base">
-                    <span className="font-semibold">সর্বমোট অর্ডার মূল্য: </span>
-                    <span className="text-lg md:text-xl font-bold text-success">
-                        ৳{bookings.reduce((sum, b) => sum + b.total_price, 0)}
-                    </span>
-                </div>
-                <div className="text-[10px] md:text-xs opacity-70">
-                    সর্বশেষ আপডেট: {new Date().toLocaleDateString('bn-BD')}
+            {/* Summary */}
+            <div className="bg-linear-to-r from-orange-50 to-orange-100/30 rounded-2xl p-4 border border-orange-100">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div>
+                        <p className="text-sm text-gray-600">সর্বমোট অর্ডার মূল্য</p>
+                        <p className="text-2xl font-bold text-orange-600">
+                            ৳{bookings.reduce((sum, b) => sum + b.total_price, 0)}
+                        </p>
+                    </div>
+                    <div className="flex items-center gap-4 text-xs text-gray-500">
+                        <span className="flex items-center gap-1"><IoCheckmarkCircle className="text-green-500" /> সম্পন্ন: {bookings.filter(b => b.order_status === 'delivered').length}</span>
+                        <span className="flex items-center gap-1"><IoTimeOutline className="text-amber-500" /> পেন্ডিং: {bookings.filter(b => b.order_status === 'pending').length}</span>
+                        <span className="flex items-center gap-1"><IoRocketOutline className="text-orange-500" /> প্রসেসিং: {bookings.filter(b => b.order_status === 'processing').length}</span>
+                    </div>
                 </div>
             </div>
         </div>

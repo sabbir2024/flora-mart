@@ -10,8 +10,6 @@ export const PUT = async (req, { params }) => {
         // request body থেকে ডাটা নিন
         const body = await req.json();
 
-        console.log('Order ID from params:', id);
-        console.log('Update data:', body);
 
         // ডাটাবেজ আপডেট করুন
         const db = await dbConnect(collectionlist.bookingsCollection)

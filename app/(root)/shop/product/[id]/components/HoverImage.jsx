@@ -1,7 +1,6 @@
 'use client';
 
-import Image from 'next/image';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 
 export default function SimpleHoverImage({
     src,
@@ -11,9 +10,8 @@ export default function SimpleHoverImage({
     height = 600
 }) {
     const [isHovered, setIsHovered] = useState(false);
-    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+    const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
     const containerRef = useRef(null);
-    const imageRef = useRef(null);
 
     // মাউস মুভমেন্ট ট্র্যাক করা
     const handleMouseMove = (e) => {
@@ -25,62 +23,63 @@ export default function SimpleHoverImage({
         const x = ((e.clientX - rect.left) / rect.width) * 100;
         const y = ((e.clientY - rect.top) / rect.height) * 100;
 
-        setMousePosition({ x, y });
+        // জুম লেভেল অনুযায়ী সীমাবদ্ধতা
+        const maxZoom = 100;
+        const limitedX = Math.min(Math.max(x, 0), maxZoom);
+        const limitedY = Math.min(Math.max(y, 0), maxZoom);
+
+        setMousePosition({ x: limitedX, y: limitedY });
     };
 
     // মাউস লিভ করলে রিসেট
     const handleMouseLeave = () => {
         setIsHovered(false);
-        setMousePosition({ x: 50, y: 50 }); // সেন্টারে রিসেট
+        setMousePosition({ x: 50, y: 50 });
+    };
+
+    // মাউস এন্টার
+    const handleMouseEnter = () => {
+        setIsHovered(true);
     };
 
     return (
         <div
             ref={containerRef}
-            className="relative w-full overflow-hidden rounded-lg bg-gray-100 cursor-crosshair"
+            className="relative w-full overflow-hidden rounded-xl bg-surface-container cursor-crosshair group"
             style={{
                 aspectRatio: '1/1',
                 maxWidth: `${width}px`
             }}
-            onMouseEnter={() => setIsHovered(true)}
+            onMouseEnter={handleMouseEnter}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
         >
-            {/* ইমেজ */}
-            <Image
-                ref={imageRef}
+            {/* ইমেজ - img ট্যাগ ব্যবহার করে */}
+            <img
                 src={src}
                 alt={alt}
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
                 className={`
-                    object-cover transition-transform duration-200 ease-out
+                    w-full h-full object-cover transition-transform duration-300 ease-out
                     ${isHovered ? 'scale-[2.5]' : 'scale-100'}
                 `}
                 style={{
                     transformOrigin: `${mousePosition.x}% ${mousePosition.y}%`
                 }}
-                priority
+                loading="eager"
             />
 
-            {/* জুম ইন্ডিকেটর - এখন কোথায় জুম হচ্ছে দেখায় */}
+            {/* জুম ইন্ডিকেটর - মিনিমালিস্ট ডিজাইন */}
             {isHovered && (
-                <>
-                    <div
-                        className="absolute w-16 h-16 border-2 border-white rounded-full pointer-events-none"
-                        style={{
-                            left: `${mousePosition.x}%`,
-                            top: `${mousePosition.y}%`,
-                            transform: 'translate(-50%, -50%)',
-                            boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.3)'
-                        }}
-                    />
-
-                    <div className="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded z-10">
-                        🔍 {Math.round(mousePosition.x)}%, {Math.round(mousePosition.y)}%
-                    </div>
-                </>
+                <div className="absolute bottom-3 right-3 bg-black/60 backdrop-blur-sm text-white text-[10px] font-mono px-2 py-1 rounded-full z-10">
+                    🔍 {Math.round(mousePosition.x)}%, {Math.round(mousePosition.y)}%
+                </div>
             )}
+
+            {/* হোভার ইফেক্টের জন্য ওভারলে */}
+            <div className={`
+                absolute inset-0 bg-black/0 transition-all duration-300
+                ${isHovered ? 'bg-black/10' : ''}
+            `} />
         </div>
     );
 }
