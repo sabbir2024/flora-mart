@@ -3,7 +3,7 @@
 
 export default function Social() {
     const heandleClick = async (name) => {
-        console.log(name)
+
     }
     return (
         <div className="grid grid-cols-2 gap-4">

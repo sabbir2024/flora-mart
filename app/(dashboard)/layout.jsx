@@ -1,5 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
+import DashboardNav from "./layoutComponents/dashboardNav/DashboardNav";
+import Sidebar from "./layoutComponents/Sidebar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,7 +24,18 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <div className="drawer lg:drawer-open">
+          <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
+          <div className="drawer-content">
+            {/* Navbar */}
+            <DashboardNav />
+            {/* Page content here */}
+            <div className="p-4">{children}</div>
+          </div>
+
+          <Sidebar />
+        </div>
+
       </body>
     </html>
   );

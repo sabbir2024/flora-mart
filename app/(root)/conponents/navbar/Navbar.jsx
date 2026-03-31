@@ -13,7 +13,11 @@ export default function Navbar() {
     const [cardLength, setCardLength] = useState(true);
     const pathname = usePathname();
 
-    const email = null;
+    const user = [
+        {
+            email: 'dfdf',
+            role: 'admin'
+        }]
 
     useEffect(() => {
         let lastScrollY = window.scrollY;
@@ -151,7 +155,7 @@ export default function Navbar() {
                         </div>
 
                         {/* প্রোফাইল ড্রপডাউন */}
-                        {email &&
+                        {user &&
                             <div className="dropdown dropdown-end">
                                 <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
                                     <div className={`w-10 rounded-full ring-2 ring-offset-2 ${isActive('/profile') || isActive('/orders') || isActive('/settings')
@@ -191,11 +195,11 @@ export default function Navbar() {
                                     </li>
                                     <li>
                                         <Link
-                                            href="/settings"
-                                            className={`hover:text-blue-600 ${isActive('/settings') ? 'text-blue-600 bg-blue-50' : ''
+                                            href="/dashboard"
+                                            className={`hover:text-blue-600 ${isActive('/dashboard') ? 'text-blue-600 bg-blue-50' : ''
                                                 }`}
                                         >
-                                            Settings
+                                            Dashboard
                                         </Link>
                                     </li>
                                     <li><hr className="my-1" /></li>
@@ -216,7 +220,7 @@ export default function Navbar() {
             </div>
 
             {/* মোবাইল ডক - শুধু মোবাইলে দেখাবে */}
-            <Mobile />
+            <Mobile user={user} />
         </Container>
     );
 }
