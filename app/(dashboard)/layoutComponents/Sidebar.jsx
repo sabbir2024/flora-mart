@@ -97,7 +97,7 @@ export default function Sidebar() {
                         </div>
                     ) : (
                         <div className="flex justify-center">
-                            <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
+                            <div className="w-8 h-8 bg-linear-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
                                 <span className="text-white font-bold text-sm">A</span>
                             </div>
                         </div>
@@ -139,34 +139,35 @@ export default function Sidebar() {
                 {/* Bottom Section - Add Product Button & User Profile */}
                 <div className="px-3 py-4 border-t border-gray-100 dark:border-zinc-800">
                     {/* Add Product Button */}
-                    <button className={`
-                        w-full mb-4 bg-gradient-to-r from-orange-500 to-orange-600 
+                    <Link href={'/dashboard/admin/add-product'}>
+                        <button className={`
+                        w-full mb-4 bg-linear-to-r from-orange-500 to-orange-600 
                         text-white font-bold rounded-xl transition-all duration-200
                         hover:shadow-lg hover:scale-[1.02] active:scale-95
                         ${isCollapsed ? 'px-2 py-2' : 'px-4 py-2.5'}
                     `}>
-                        {!isCollapsed ? (
-                            <span className="flex items-center justify-center gap-2 text-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-4">
+                            {!isCollapsed ? (
+                                <span className="flex items-center justify-center gap-2 text-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-4">
+                                        <path d="M12 5v14M5 12h14" />
+                                    </svg>
+                                    Add Product
+                                </span>
+                            ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-5 mx-auto">
                                     <path d="M12 5v14M5 12h14" />
                                 </svg>
-                                Add Product
-                            </span>
-                        ) : (
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-5 mx-auto">
-                                <path d="M12 5v14M5 12h14" />
-                            </svg>
-                        )}
-                    </button>
-
+                            )}
+                        </button>
+                    </Link>
                     {/* User Profile Section */}
                     <div className={`
                         flex items-center rounded-xl p-2 transition-all duration-200
                         ${isCollapsed ? 'justify-center' : 'gap-3'}
                         hover:bg-gray-50 dark:hover:bg-zinc-800 cursor-pointer
                     `}>
-                        <div className="relative flex-shrink-0">
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+                        <div className="relative shrink-0">
+                            <div className="w-8 h-8 rounded-full bg-linear-to-br from-orange-400 to-orange-600 flex items-center justify-center">
                                 <span className="text-white text-xs font-bold">JV</span>
                             </div>
                             <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white dark:border-zinc-900"></div>

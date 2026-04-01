@@ -1,6 +1,7 @@
 // components/ProductsManagement.jsx
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 
 export default function ProductsManagement() {
@@ -128,14 +129,13 @@ export default function ProductsManagement() {
                                 Manage your inventory, pricing, and product visibility across your global storefront.
                             </p>
                         </div>
-                        <button className="bg-gradient-to-br from-primary to-primary-container text-on-primary px-6 md:px-8 py-3 md:py-4 rounded-xl font-bold shadow-xl shadow-primary/20 hover:scale-[1.03] transition-all flex items-center justify-center gap-2 group">
-                            <span className="material-symbols-outlined group-hover:rotate-90 transition-transform text-lg md:text-xl">
-                                add
-                            </span>
-                            Add New Product
-                        </button>
-                    </div>
+                        <Link href={'/dashboard/admin/add-product'}>
+                            <button className="bg-linear-to-br from-primary to-primary-container text-on-primary px-6 md:px-8 py-3 md:py-4 rounded-xl font-bold shadow-xl shadow-primary/20 hover:scale-[1.03] transition-all flex items-center justify-center gap-2 group">
 
+                                Add New Product
+                            </button>
+                        </Link>
+                    </div>
                     {/* Summary Bento Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-12">
                         {stats.map((stat, idx) => (
@@ -205,7 +205,7 @@ export default function ProductsManagement() {
 
                         {/* Products Table */}
                         <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse min-w-[800px]">
+                            <table className="w-full text-left border-collapse min-w-200">
                                 <thead>
                                     <tr className="bg-surface-container-low/30">
                                         <th className="px-4 md:px-6 py-3 md:py-4 text-[10px] md:text-xs font-bold uppercase tracking-widest text-outline">
@@ -233,7 +233,7 @@ export default function ProductsManagement() {
                                         <tr key={product.id} className="hover:bg-surface-container-low/20 transition-colors group">
                                             <td className="px-4 md:px-6 py-4">
                                                 <div className="flex items-center gap-3 md:gap-4">
-                                                    <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl overflow-hidden bg-surface-container flex-shrink-0">
+                                                    <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl overflow-hidden bg-surface-container shrink-0">
                                                         <img
                                                             alt={product.name}
                                                             className="w-full h-full object-cover"
