@@ -34,7 +34,7 @@ export default function Checkout({ product }) {
         quantity: 1,
         paymentMethod: 'cod',
         productName: product?.product_name || 'Waterproof and Sweat Proof Hair Dye Color',
-        productPrice: product?.price?.current_price || 750
+        productPrice: product?.basePrice
     });
 
     const [selectedDivision, setSelectedDivision] = useState(null);
@@ -76,7 +76,7 @@ export default function Checkout({ product }) {
             }));
         }
     };
-
+    console.log(product)
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
@@ -204,7 +204,7 @@ export default function Checkout({ product }) {
     };
 
     const deliveryCharge = getDeliveryCharge();
-    const subtotal = formData.quantity * product?.price?.current_price;
+    const subtotal = formData.quantity * product?.basePrice;
     const totalPrice = subtotal + deliveryCharge;
 
     const divisions = [
@@ -391,7 +391,7 @@ export default function Checkout({ product }) {
                                 <label className="label">
                                     <span className="label-text font-medium flex items-center gap-1">
                                         <IoMailOutline className="text-orange-500" />
-                                        ইমেইল *
+                                        ইমেইল
                                     </span>
                                 </label>
                                 <input
@@ -401,7 +401,7 @@ export default function Checkout({ product }) {
                                     onChange={handleInputChange}
                                     placeholder="your@email.com"
                                     className="input input-bordered rounded-xl focus:border-orange-500 focus:ring-orange-500 transition-all"
-                                    required
+
                                 />
                             </div>
 

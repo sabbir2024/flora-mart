@@ -9,7 +9,7 @@ export default function ImageUploader({ images, onImagesChange, previewImage, on
     const [uploadProgress, setUploadProgress] = useState({});
 
     // ImageBB API Key - You need to get this from https://api.imgbb.com/
-    const IMAGEBB_API_KEY = process.env.NEXT_PUBLIC_IMAGEBB_API_KEY || 'your-api-key-here';
+    const IMAGEBB_API_KEY = process.env.NEXT_PUBLIC_IMAGEBB_API_KEY;
 
     const uploadToImageBB = async (file) => {
         const formData = new FormData();

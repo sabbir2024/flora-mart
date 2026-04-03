@@ -17,8 +17,9 @@
     "react-fast-marquee": "^1.6.5",
     "react-icons": "^5.5.0",
     "react-image": "^4.1.0",
-    "sweetalert2": "^11.26.21",
-    "swiper": "^12.1.2"
+    "react-image-magnify": "^2.7.4",
+    "react-medium-image-zoom": "^5.4.2",
+    "sweetalert2": "^11.26.21"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

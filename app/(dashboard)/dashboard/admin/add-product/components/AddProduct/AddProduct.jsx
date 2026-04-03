@@ -12,6 +12,9 @@ import ProductPreviewCard from '../ProductPreviewCard';
 import ProductStatusWidget from '../ProductStatusWidget';
 import SEOPreview from '../SEOPreview';
 import { apiUrl } from '../../../../../../components/url';
+import { IoIosStarHalf, IoMdStar } from 'react-icons/io';
+import { IoStarOutline } from 'react-icons/io5';
+import Swal from 'sweetalert2';
 
 export default function AddProduct() {
     const router = useRouter();
@@ -122,27 +125,56 @@ export default function AddProduct() {
         setIsLoading(true);
 
         try {
-            const submitData = new FormData();
-            Object.keys(formData).forEach(key => {
-                if (key === 'dimensions') submitData.append('dimensions', JSON.stringify(formData.dimensions));
-                else if (key === 'tags') submitData.append('tags', JSON.stringify(formData.tags));
-                else if (key !== 'description') submitData.append(key, formData[key]);
-            });
-            submitData.append('description', descriptionHtml);
-            images.forEach(image => submitData.append('images', image.file));
-            submitData.append('primaryImageIndex', images.findIndex(img => img.preview === previewImage));
+            const imageUrls = images.map(img => img.uploadedUrl || img.displayUrl);
 
-            const response = await fetch(`{${apiUrl}/products`, { method: 'POST', body: submitData });
+            const productData = {
+                productName: formData.productName,
+                category: formData.category,
+                brand: formData.brand,
+                description: descriptionHtml,
+                basePrice: parseFloat(formData.basePrice),
+                comparePrice: formData.comparePrice ? parseFloat(formData.comparePrice) : null,
+                sku: formData.sku,
+                quantity: parseInt(formData.quantity),
+                isVisible: formData.isVisible,
+                isPreorder: formData.isPreorder,
+                weight: formData.weight ? parseFloat(formData.weight) : null,
+                dimensions: {
+                    length: formData.dimensions.length ? parseInt(formData.dimensions.length) : 0,
+                    width: formData.dimensions.width ? parseInt(formData.dimensions.width) : 0,
+                    height: formData.dimensions.height ? parseInt(formData.dimensions.height) : 0
+                },
+                tags: formData.tags,
+
+                images: imageUrls,
+                primaryImage: imageUrls[images.findIndex(img => img.preview === previewImage)] || imageUrls[0],
+                createdAt: new Date().toISOString()
+            };
+            console.log('ppppppp', productData)
+            const response = await fetch(`${apiUrl}/add-product`, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": 'application/json'
+                },
+                body: JSON.stringify(productData)
+            })
+
             const data = await response.json();
-
-            if (response.ok) {
-                alert('Product created successfully!');
-                router.push('dashboard/admin/products');
-                router.refresh();
-            } else {
-                throw new Error(data.message || 'Failed to create product');
+            if (data.success) {
+                Swal.fire({
+                    title: "Good job!",
+                    text: data.message,
+                    icon: "success"
+                });
             }
+
         } catch (error) {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Something went wrong!",
+                footer: error.message
+            });
             setErrors(prev => ({ ...prev, submit: error.message }));
             setTimeout(() => setErrors(prev => ({ ...prev, submit: '' })), 5000);
         } finally {
@@ -244,11 +276,304 @@ export default function AddProduct() {
                             <DimensionsSection dimensions={formData.dimensions} onDimensionChange={handleDimensionChange} />
                         </div>
 
-                        {/* Right Column */}
-                        <aside className="col-span-12 lg:col-span-4 sticky top-24 space-y-6 md:space-y-8">
-                            <ProductPreviewCard productName={formData.productName} category={formData.category} brand={formData.brand} basePrice={formData.basePrice} comparePrice={formData.comparePrice} descriptionHtml={descriptionHtml} previewImage={previewImage} />
-                            <ProductStatusWidget isVisible={formData.isVisible} isPreorder={formData.isPreorder} onVisibleChange={(e) => setFormData(prev => ({ ...prev, isVisible: e.target.checked }))} onPreorderChange={(e) => setFormData(prev => ({ ...prev, isPreorder: e.target.checked }))} />
-                            <SEOPreview productName={formData.productName} category={formData.category} descriptionHtml={descriptionHtml} />
+                        {/* Right Column - Live Preview Cards */}
+                        <aside className="col-span-12 lg:col-span-4 space-y-6 md:space-y-8">
+                            {/* Preview Card 1: Product Listing Page View */}
+                            <div className="bg-surface-container-lowest rounded-xl shadow-xl overflow-hidden border border-neutral-100/50 ">
+                                <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-3 md:p-4 border-b border-neutral-100">
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Live Preview</span>
+                                            <p className="text-[9px] text-neutral-500 mt-0.5">Product Listing Page View</p>
+                                        </div>
+                                        <div className="flex gap-1">
+                                            <div className="w-2 h-2 rounded-full bg-red-400/20"></div>
+                                            <div className="w-2 h-2 rounded-full bg-yellow-400/20"></div>
+                                            <div className="w-2 h-2 rounded-full bg-green-400/20"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="p-4">
+                                    {/* Listing Card Preview */}
+                                    <div className="group cursor-pointer">
+                                        <div className="bg-surface-container-low rounded-xl overflow-hidden aspect-square">
+                                            <img
+                                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                src={previewImage || 'https://via.placeholder.com/300x300?text=No+Image'}
+                                                alt={formData.productName || "Product preview"}
+                                            />
+                                        </div>
+                                        <div className="mt-3">
+                                            <div className="flex justify-between items-start gap-2">
+                                                <h3 className="font-bold text-sm line-clamp-2 flex-1">
+                                                    {formData.productName || "Product Name"}
+                                                </h3>
+                                                <p className="text-primary font-bold text-sm whitespace-nowrap">
+                                                    ${formData.basePrice || "0.00"}
+                                                </p>
+                                            </div>
+                                            {formData.comparePrice && (
+                                                <p className="text-xs text-gray-400 line-through">
+                                                    ${formData.comparePrice}
+                                                </p>
+                                            )}
+                                            <div className="flex items-center gap-2 mt-1">
+                                                <div className="flex text-orange-500">
+                                                    <div className="flex items-center gap-2 mt-1">
+                                                        <IoMdStar />
+                                                        <IoMdStar />
+                                                        <IoIosStarHalf />
+                                                        <IoStarOutline />
+                                                    </div>
+                                                </div>
+                                                <span className="text-[10px] text-gray-400">(12 reviews)</span>
+                                            </div>
+                                            <div className="mt-2">
+                                                <span className="text-[10px] text-gray-400">{formData.category}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Preview Card 2: Product Details Page View */}
+                            {/* Preview Card 2: Product Details Page View */}
+                            <div className="bg-surface-container-lowest rounded-xl shadow-xl overflow-hidden border border-neutral-100/50">
+                                <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-3 md:p-4 border-b border-neutral-100">
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Live Preview</span>
+                                            <p className="text-[9px] text-neutral-500 mt-0.5">Product Details Page View</p>
+                                        </div>
+                                        <div className="flex gap-1">
+                                            <div className="w-2 h-2 rounded-full bg-red-400/20"></div>
+                                            <div className="w-2 h-2 rounded-full bg-yellow-400/20"></div>
+                                            <div className="w-2 h-2 rounded-full bg-green-400/20"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="p-4">
+                                    <div className="flex gap-3">
+                                        {/* Thumbnail */}
+                                        <div className="w-16 h-16 md:w-20 md:h-20 rounded-lg bg-surface-container-low overflow-hidden flex-shrink-0">
+                                            <img
+                                                className="w-full h-full object-cover"
+                                                src={previewImage || 'https://via.placeholder.com/80x80?text=No+Image'}
+                                                alt={formData.productName || "Product preview"}
+                                            />
+                                        </div>
+                                        {/* Product Info */}
+                                        <div className="flex-1 min-w-0">
+                                            <h3 className="font-bold text-sm md:text-base text-gray-900 line-clamp-2">
+                                                {formData.productName || "Product Name"}
+                                            </h3>
+                                            <div className="flex items-center gap-2 mt-1">
+                                                <div className="flex text-orange-500">
+                                                    {[...Array(4)].map((_, i) => (
+                                                        <span key={i} className="material-symbols-outlined text-xs">star</span>
+                                                    ))}
+                                                    <span className="material-symbols-outlined text-xs">star_half</span>
+                                                </div>
+                                                <span className="text-[10px] text-gray-400">(12 reviews)</span>
+                                            </div>
+                                            <div className="flex items-center gap-2 mt-2">
+                                                <span className="text-lg md:text-xl font-bold text-primary">
+                                                    ${formData.basePrice || "0.00"}
+                                                </span>
+                                                {formData.comparePrice && (
+                                                    <span className="text-xs text-gray-400 line-through">
+                                                        ${formData.comparePrice}
+                                                    </span>
+                                                )}
+                                            </div>
+
+                                            {/* Rich Text Description with proper styling */}
+                                            <div className="mt-3 max-h-32 overflow-y-auto">
+                                                <div
+                                                    className="prose prose-sm max-w-none"
+                                                    style={{
+                                                        fontSize: '0.75rem',
+                                                        lineHeight: '1.5',
+                                                        color: '#6b7280',
+                                                        direction: 'ltr',
+                                                        textAlign: 'left'
+                                                    }}
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: (() => {
+                                                            if (!descriptionHtml || descriptionHtml === '<p><br></p>' || descriptionHtml === '<p></p>') {
+                                                                return '<p class="text-gray-400">Product description will appear here...</p>';
+                                                            }
+                                                            return descriptionHtml;
+                                                        })()
+                                                    }}
+                                                />
+                                            </div>
+
+                                            <button className="w-full mt-3 py-2 rounded-lg bg-primary text-white text-xs font-bold hover:bg-primary/90 transition-colors">
+                                                Add to Cart
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <style jsx>{`
+    .prose {
+        font-size: 0.75rem;
+        line-height: 1.5;
+        color: #6b7280;
+    }
+    .prose p {
+        margin-bottom: 0.5rem;
+        color: #6b7280;
+    }
+    .prose strong, .prose b {
+        font-weight: 700;
+        color: #1f2937;
+    }
+    .prose em, .prose i {
+        font-style: italic;
+        color: #4b5563;
+    }
+    .prose u {
+        text-decoration: underline;
+    }
+    .prose a {
+        color: #ea580c;
+        text-decoration: underline;
+    }
+    .prose a:hover {
+        color: #c2410c;
+    }
+    .prose ul {
+        list-style-type: disc;
+        padding-left: 1.25rem;
+        margin-bottom: 0.5rem;
+    }
+    .prose ol {
+        list-style-type: decimal;
+        padding-left: 1.25rem;
+        margin-bottom: 0.5rem;
+    }
+    .prose li {
+        margin-bottom: 0.25rem;
+        color: #6b7280;
+    }
+    .prose h1, .prose h2, .prose h3, .prose h4 {
+        font-weight: 700;
+        color: #1f2937;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    .prose h1 { font-size: 1.25rem; }
+    .prose h2 { font-size: 1.125rem; }
+    .prose h3 { font-size: 1rem; }
+    .prose blockquote {
+        border-left: 2px solid #e5e7eb;
+        padding-left: 0.75rem;
+        margin: 0.5rem 0;
+        font-style: italic;
+        color: #6b7280;
+    }
+    .prose code {
+        background-color: #f3f4f6;
+        padding: 0.125rem 0.25rem;
+        border-radius: 0.25rem;
+        font-family: monospace;
+        font-size: 0.7rem;
+    }
+    .prose pre {
+        background-color: #f3f4f6;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+        font-family: monospace;
+        font-size: 0.7rem;
+        margin: 0.5rem 0;
+    }
+    .prose img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 0.5rem;
+        margin: 0.5rem 0;
+    }
+    .prose table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0.5rem 0;
+    }
+    .prose th, .prose td {
+        border: 1px solid #e5e7eb;
+        padding: 0.5rem;
+        text-align: left;
+    }
+    .prose th {
+        background-color: #f9fafb;
+        font-weight: 600;
+    }
+                            `}</style>
+
+                            {/* Preview Card 3: Cart/Quick View (Optional) */}
+                            <div className="bg-surface-container-lowest rounded-xl shadow-xl overflow-hidden border border-neutral-100/50">
+                                <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-3 md:p-4 border-b border-neutral-100">
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Live Preview</span>
+                                            <p className="text-[9px] text-neutral-500 mt-0.5">Cart / Quick View</p>
+                                        </div>
+                                        <div className="flex gap-1">
+                                            <div className="w-2 h-2 rounded-full bg-red-400/20"></div>
+                                            <div className="w-2 h-2 rounded-full bg-yellow-400/20"></div>
+                                            <div className="w-2 h-2 rounded-full bg-green-400/20"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="p-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-12 h-12 rounded-lg bg-surface-container-low overflow-hidden flex-shrink-0">
+                                            <img
+                                                className="w-full h-full object-cover"
+                                                src={previewImage || 'https://via.placeholder.com/48x48?text=No+Image'}
+                                                alt={formData.productName || "Product preview"}
+                                            />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <h4 className="font-semibold text-xs line-clamp-1">
+                                                {formData.productName || "Product Name"}
+                                            </h4>
+                                            <div className="flex items-center justify-between mt-1">
+                                                <span className="text-primary font-bold text-sm">
+                                                    ${formData.basePrice || "0.00"}
+                                                </span>
+                                                <div className="flex items-center gap-2">
+                                                    <button className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-xs">-</button>
+                                                    <span className="text-xs w-4 text-center">1</span>
+                                                    <button className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-xs">+</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="mt-3 pt-3 border-t border-gray-100">
+                                        <div className="flex justify-between text-xs">
+                                            <span>Subtotal:</span>
+                                            <span className="font-bold">${formData.basePrice || "0.00"}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Original Components */}
+                            <ProductStatusWidget
+                                isVisible={formData.isVisible}
+                                isPreorder={formData.isPreorder}
+                                onVisibleChange={(e) => setFormData(prev => ({ ...prev, isVisible: e.target.checked }))}
+                                onPreorderChange={(e) => setFormData(prev => ({ ...prev, isPreorder: e.target.checked }))}
+                            />
+                            <SEOPreview
+                                productName={formData.productName}
+                                category={formData.category}
+                                descriptionHtml={descriptionHtml}
+                            />
                         </aside>
                     </div>
                 </div>

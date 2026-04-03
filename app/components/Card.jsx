@@ -1,5 +1,4 @@
-// import Link from "next/link";
-
+import Image from "next/image";
 import Link from "next/link";
 
 // export default function Card({ item }) {
@@ -24,7 +23,6 @@ import Link from "next/link";
 // }
 
 export default function Card({ product }) {
-    // console.log(product);
 
     // রেটিং অনুযায়ী স্টার জেনারেট করার ফাংশন
     const renderRatingStars = (rating) => {
@@ -101,10 +99,12 @@ export default function Card({ product }) {
         <Link href={`/shop/product/${product?._id}`} className="group cursor-pointer">
             {/* Image Container */}
             <div className="bg-gray-100 rounded-xl overflow-hidden aspect-4/5">
-                <img
-                    src={product.product_url}
+                <Image
+                    height={200}
+                    width={200}
+                    src={product.product_url || product.primaryImage}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    alt={product.product_name}
+                    alt={product.productName || product.product_name}
                 />
             </div>
 
@@ -112,10 +112,10 @@ export default function Card({ product }) {
             <div className="mt-3 space-y-2">
                 <div className="flex justify-between items-start gap-2">
                     <h3 className="font-bold text-sm sm:text-base line-clamp-2 flex-1">
-                        {product.product_name}
+                        {product.productName || product.product_name}
                     </h3>
                     <p className="text-orange-600 font-bold text-sm sm:text-base whitespace-nowrap">
-                        ৳{product.price?.current_price || product.currentPrice || 0}
+                        ৳{product.price?.current_price || product.basePrice || 0}
                     </p>
                 </div>
 
