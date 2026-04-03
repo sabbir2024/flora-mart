@@ -7,6 +7,7 @@ import TopBar from "./TopBar";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import Whatsapp from "./Whatsapp";
 
 export default function Navbar() {
     const [showCall, setShowCall] = useState(true);
@@ -64,6 +65,7 @@ export default function Navbar() {
 
             {/* মেইন নেভিগেশন - LG তে স্ট্যাটিক */}
             <div className="hidden lg:block sticky top-0 z-50 bg-white shadow-md">
+                <Whatsapp />
                 <div className="navbar bg-base-100">
                     <div className="navbar-start flex">
                         <span className="btn btn-ghost text-xl">

@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
+import Whatsapp from './Whatsapp';
 
 export default function Mobile({ user }) {
     const pathname = usePathname();
@@ -79,93 +80,96 @@ export default function Mobile({ user }) {
     }, []);
 
     return (
-        <div className="flex lg:hidden fixed bottom-0 left-0 right-0 z-50">
-            <div className="dock dock-xs bg-white shadow-lg font-bold w-full">
-                {navItems.map((item) => (
-                    <Link
-                        key={item.href}
-                        href={item.href}
-                        className={isActive(item.href)
-                            ? "dock-active text-orange-600"
-                            : "text-gray-600 hover:text-blue-600"
-                        }
-                    >
-                        {item.icon}
-                        <span className="dock-label text-xs">{item.label}</span>
-                    </Link>
-                ))}
-
-                {/* প্রোফাইল ড্রপডাউন */}
-                {user && (
-                    <div className="relative" ref={dropdownRef}>
-                        <button
-                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                            className={`flex flex-col items-center justify-center gap-1 py-2 px-3 ${isDropdownOpen ? 'text-orange-600' : 'text-gray-600'
-                                }`}
+        <>
+            <Whatsapp />
+            <div className="flex lg:hidden fixed bottom-0 left-0 right-0 z-50">
+                <div className="dock dock-xs bg-white shadow-lg font-bold w-full">
+                    {navItems.map((item) => (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            className={isActive(item.href)
+                                ? "dock-active text-orange-600"
+                                : "text-gray-600 hover:text-blue-600"
+                            }
                         >
-                            <div className={`w-5 h-5 rounded-full ring-2 ring-offset-1 ${isActive('/profile') || isActive('/orders') || isActive('/settings')
+                            {item.icon}
+                            <span className="dock-label text-xs">{item.label}</span>
+                        </Link>
+                    ))}
+
+                    {/* প্রোফাইল ড্রপডাউন */}
+                    {user && (
+                        <div className="relative" ref={dropdownRef}>
+                            <button
+                                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                                className={`flex flex-col items-center justify-center gap-1 py-2 px-3 ${isDropdownOpen ? 'text-orange-600' : 'text-gray-600'
+                                    }`}
+                            >
+                                <div className={`w-5 h-5 rounded-full ring-2 ring-offset-1 ${isActive('/profile') || isActive('/orders') || isActive('/settings')
                                     ? 'ring-blue-600'
                                     : 'ring-blue-400'
-                                }`}>
-                                <img
-                                    alt="Profile"
-                                    src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                                    className="w-full h-full rounded-full object-cover"
-                                />
-                            </div>
-                            <span className="text-xs">Account</span>
-                        </button>
+                                    }`}>
+                                    <img
+                                        alt="Profile"
+                                        src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                                        className="w-full h-full rounded-full object-cover"
+                                    />
+                                </div>
+                                <span className="text-xs">Account</span>
+                            </button>
 
-                        {isDropdownOpen && (
-                            <ul className="absolute bottom-full mb-2 right-0 menu menu-sm bg-base-100 rounded-box z-50 w-52 p-2 shadow-xl">
-                                <li className="menu-title">
-                                    <span>My Account</span>
-                                </li>
-                                <li>
-                                    <Link
-                                        href="/profile"
-                                        onClick={() => setIsDropdownOpen(false)}
-                                        className={`hover:text-blue-600 ${isActive('/profile') ? 'text-blue-600 bg-blue-50' : ''
-                                            }`}
-                                    >
-                                        Profile <span className="badge badge-sm bg-blue-500 text-white">New</span>
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
-                                        href="/orders"
-                                        onClick={() => setIsDropdownOpen(false)}
-                                        className={`hover:text-blue-600 ${isActive('/orders') ? 'text-blue-600 bg-blue-50' : ''
-                                            }`}
-                                    >
-                                        Orders
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
-                                        href="/dashboard"
-                                        onClick={() => setIsDropdownOpen(false)}
-                                        className={`hover:text-blue-600 ${isActive('/dashboard') ? 'text-blue-600 bg-blue-50' : ''
-                                            }`}
-                                    >
-                                        Dashboard
-                                    </Link>
-                                </li>
-                                <li><hr className="my-1" /></li>
-                                <li>
-                                    <Link
-                                        href="/logout"
-                                        onClick={() => setIsDropdownOpen(false)}
-                                        className="text-red-500 hover:text-red-700"
-                                    >
-                                        Logout
-                                    </Link>
-                                </li>
-                            </ul>
-                        )}
-                    </div>
-                )}
+                            {isDropdownOpen && (
+                                <ul className="absolute bottom-full mb-2 right-0 menu menu-sm bg-base-100 rounded-box z-50 w-52 p-2 shadow-xl">
+                                    <li className="menu-title">
+                                        <span>My Account</span>
+                                    </li>
+                                    <li>
+                                        <Link
+                                            href="/profile"
+                                            onClick={() => setIsDropdownOpen(false)}
+                                            className={`hover:text-blue-600 ${isActive('/profile') ? 'text-blue-600 bg-blue-50' : ''
+                                                }`}
+                                        >
+                                            Profile <span className="badge badge-sm bg-blue-500 text-white">New</span>
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link
+                                            href="/orders"
+                                            onClick={() => setIsDropdownOpen(false)}
+                                            className={`hover:text-blue-600 ${isActive('/orders') ? 'text-blue-600 bg-blue-50' : ''
+                                                }`}
+                                        >
+                                            Orders
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link
+                                            href="/dashboard"
+                                            onClick={() => setIsDropdownOpen(false)}
+                                            className={`hover:text-blue-600 ${isActive('/dashboard') ? 'text-blue-600 bg-blue-50' : ''
+                                                }`}
+                                        >
+                                            Dashboard
+                                        </Link>
+                                    </li>
+                                    <li><hr className="my-1" /></li>
+                                    <li>
+                                        <Link
+                                            href="/logout"
+                                            onClick={() => setIsDropdownOpen(false)}
+                                            className="text-red-500 hover:text-red-700"
+                                        >
+                                            Logout
+                                        </Link>
+                                    </li>
+                                </ul>
+                            )}
+                        </div>
+                    )}
+                </div>
             </div>
-        </div>
+        </>
     );
 }
