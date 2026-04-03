@@ -140,7 +140,7 @@ export default function Whatsapp() {
                         </div>
 
                         {/* ইনপুট এরিয়া */}
-                        <div className="mb-3">
+                        <div className="mb-3 text-black">
                             <textarea
                                 ref={textareaRef}
                                 value={message}
@@ -157,8 +157,8 @@ export default function Whatsapp() {
                             onClick={handleSendMessage}
                             disabled={!message.trim()}
                             className={`block w-full text-white text-center py-3 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 ${message.trim()
-                                    ? 'bg-green-500 hover:bg-green-600 cursor-pointer transform hover:scale-[1.02]'
-                                    : 'bg-gray-300 cursor-not-allowed'
+                                ? 'bg-green-500 hover:bg-green-600 cursor-pointer transform hover:scale-[1.02]'
+                                : 'bg-gray-300 cursor-not-allowed'
                                 }`}
                         >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
