@@ -1,18 +1,18 @@
-import ProductGrid from "./components/ProductGrid/ProductGrid";
-import Sidebar from "./components/Sidebar/Sidebar";
+import Filters from "../../components/Filters/Filters";
+import ProductGrid from "../../components/ProductGrid/ProductGrid";
 
 
-export default function page() {
+export default async function page({ searchParams }) {
+    const resolvedSearchParams = await searchParams;
+
+    // Change default from 'Home' to 'All' to match Filters
+    const category = resolvedSearchParams?.category || 'All';
+    const sort = resolvedSearchParams?.sort || 'Latest';
 
     return (
         <div className="w-full mx-auto text-center">
-            <main className=" max-w-360 mx-auto px-8">
-
-                <div className="flex flex-col lg:flex-row gap-12">
-                    <Sidebar />
-                    <ProductGrid />
-                </div>
-            </main>
+            <Filters />
+            <ProductGrid category={category} sort={sort} />
         </div>
     );
 }

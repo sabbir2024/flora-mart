@@ -53,7 +53,7 @@ export default function Filters() {
     // ক্যাটাগরি লিস্ট
     const categories = [
         { label: 'All', value: 'All' },
-        { label: 'Clothing & Fashion', value: 'ClothingF' },
+        { label: 'Clothing & Fashion', value: 'Clothing' },
         { label: 'Baby Products', value: 'Baby' },
         { label: 'Fitness', value: 'Fitness' },
         { label: 'Home & Decor', value: 'Home' },
@@ -61,7 +61,7 @@ export default function Filters() {
     ];
 
     return (
-        <section className="max-w-screen-2xl mx-auto px-4 md:px-6 mb-10 sticky top-0 z-10 bg-white/90 backdrop-blur-sm">
+        <section className="max-w-screen-2xl mx-auto px-4 md:px-6 mb-10 sticky top-0 z-50 bg-white/90 backdrop-blur-sm">
             <div className="bg-gray-100 rounded-xl p-4 flex flex-col md:flex-row gap-4 justify-between items-center">
 
                 {/* ক্যাটাগরি ট্যাবস - মোবাইলের জন্য স্ক্রল যোগ করা হয়েছে */}

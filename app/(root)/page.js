@@ -1,9 +1,9 @@
 // app/page.jsx
 import Container from "../components/Container";
+import Filters from "../components/Filters/Filters";
 import NewsMarquee from "../components/NewsMarquee";
 import ProductGrid from "../components/ProductGrid/ProductGrid";
 import CategoryBento from "./conponents/CategoryBento/CategoryBento";
-import Filters from "./conponents/Filters/Filters";
 import Hero from "./conponents/hero/Hero";
 
 export default async function Page({ searchParams }) {

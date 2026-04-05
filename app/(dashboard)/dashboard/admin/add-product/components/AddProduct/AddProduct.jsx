@@ -7,12 +7,11 @@ import RichTextEditor from '../RichTextEditor';
 import ImageUploader from '../ImageUploader';
 import PricingSection from '../PricingSection';
 import InventorySection from '../InventorySection';
-import DimensionsSection from '../DimensionsSection';
 import ProductStatusWidget from '../ProductStatusWidget';
 import SEOPreview from '../SEOPreview';
 import { apiUrl } from '../../../../../../components/url';
 import { IoIosStarHalf, IoMdStar } from 'react-icons/io';
-import { IoStarOutline } from 'react-icons/io5';
+import { FaCaretDown } from "react-icons/fa6"; import { IoStarOutline } from 'react-icons/io5';
 import Swal from 'sweetalert2';
 
 export default function AddProduct() {
@@ -34,7 +33,6 @@ export default function AddProduct() {
         isPreorder: false,
         tags: [],
         weight: '',
-        dimensions: { length: '', width: '', height: '' }
     });
 
     const [images, setImages] = useState([]);
@@ -95,14 +93,6 @@ export default function AddProduct() {
         if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
     };
 
-    const handleDimensionChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            dimensions: { ...prev.dimensions, [name]: value }
-        }));
-    };
-
     const handleQuantityChange = (e) => {
         setFormData(prev => ({ ...prev, quantity: parseInt(e.target.value) || 0 }));
     };
@@ -155,11 +145,7 @@ export default function AddProduct() {
                 isVisible: formData.isVisible,
                 isPreorder: formData.isPreorder,
                 weight: formData.weight ? parseFloat(formData.weight) : null,
-                dimensions: {
-                    length: formData.dimensions.length ? parseInt(formData.dimensions.length) : 0,
-                    width: formData.dimensions.width ? parseInt(formData.dimensions.width) : 0,
-                    height: formData.dimensions.height ? parseInt(formData.dimensions.height) : 0
-                },
+
                 tags: formData.tags,
                 images: imageUrls,
                 primaryImage: imageUrls[images.findIndex(img => img.preview === previewImage)] || imageUrls[0],
@@ -295,7 +281,7 @@ export default function AddProduct() {
                                                         </option>
                                                     ))}
                                                 </select>
-                                                <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 pointer-events-none">expand_more</span>
+                                                <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 pointer-events-none"><FaCaretDown /></span>
                                             </div>
                                             <div className="mt-2 flex flex-wrap gap-2">
                                                 {categories.map(cat => (
@@ -385,8 +371,6 @@ export default function AddProduct() {
                                 />
                             </div>
 
-                            {/* Dimensions */}
-                            <DimensionsSection dimensions={formData.dimensions} onDimensionChange={handleDimensionChange} />
                         </div>
 
                         {/* Right Column - Live Preview Cards */}

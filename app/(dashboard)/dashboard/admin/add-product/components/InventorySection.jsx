@@ -1,6 +1,8 @@
 // components/InventorySection.jsx
 'use client';
 
+import { FaCircleMinus, FaSquarePlus } from "react-icons/fa6";
+
 export default function InventorySection({ sku, quantity, weight, onSkuChange, onQuantityChange, onWeightChange, onQuantityIncrement, onQuantityDecrement, errors }) {
     return (
         <section className="bg-surface-container-lowest dark:bg-gray-800 p-5 md:p-8 rounded-xl shadow-sm dark:shadow-gray-900/50">
@@ -35,7 +37,7 @@ export default function InventorySection({ sku, quantity, weight, onSkuChange, o
                             onClick={onQuantityDecrement}
                             className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-surface-container-high dark:bg-gray-700 flex items-center justify-center hover:bg-primary dark:hover:bg-orange-600 hover:text-white transition-all dark:text-gray-200"
                         >
-                            <span className="material-symbols-outlined text-base md:text-lg">remove</span>
+                            <span className="material-symbols-outlined text-base md:text-lg"><FaCircleMinus /></span>
                         </button>
                         <input
                             value={quantity}
@@ -49,7 +51,7 @@ export default function InventorySection({ sku, quantity, weight, onSkuChange, o
                             onClick={onQuantityIncrement}
                             className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-surface-container-high dark:bg-gray-700 flex items-center justify-center hover:bg-primary dark:hover:bg-orange-600 hover:text-white transition-all dark:text-gray-200"
                         >
-                            <span className="material-symbols-outlined text-base md:text-lg">add</span>
+                            <span className="material-symbols-outlined text-base md:text-lg"><FaSquarePlus /></span>
                         </button>
                     </div>
                     {errors.quantity && (
