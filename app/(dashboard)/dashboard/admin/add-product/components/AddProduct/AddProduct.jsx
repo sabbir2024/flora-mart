@@ -23,7 +23,7 @@ export default function AddProduct() {
     // Form state
     const [formData, setFormData] = useState({
         productName: '',
-        category: 'Clothing & Fashion',
+        category: 'Clothing',
         brand: '',
         description: '',
         basePrice: '',
@@ -166,7 +166,6 @@ export default function AddProduct() {
                 createdAt: new Date().toISOString()
             };
 
-            // console.log(productData)
             const response = await fetch(`${apiUrl}/add-product`, {
                 method: 'POST',
                 headers: {
@@ -240,7 +239,7 @@ export default function AddProduct() {
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="px-6 md:px-8 py-2.5 md:py-3 rounded-xl bg-gradient-to-br from-orange-600 to-orange-700 dark:from-orange-500 dark:to-orange-600 text-white text-xs md:text-sm font-bold shadow-lg active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                className="px-6 md:px-8 py-2.5 md:py-3 rounded-xl bg-linear-to-br from-orange-600 to-orange-700 dark:from-orange-500 dark:to-orange-600 text-white text-xs md:text-sm font-bold shadow-lg active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                             >
                                 {isLoading ? (<>Saving...</>) : ('Save Product')}
                             </button>
@@ -265,23 +264,23 @@ export default function AddProduct() {
                                 <div className="space-y-4 md:space-y-6">
                                     <div>
                                         <label className="block text-[10px] uppercase tracking-widest text-gray-500 dark:text-gray-400 font-bold mb-2">
-                                            Product Name <span className="text-red-500">*</span>
+                                            Product Name <span className="text-red-500 dark:text-red-400">*</span>
                                         </label>
                                         <input
                                             name="productName"
                                             value={formData.productName}
                                             onChange={handleInputChange}
-                                            className={`w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 md:py-4 text-sm text-gray-900 dark:text-white focus:bg-white dark:focus:bg-gray-800 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 dark:focus:border-orange-500 transition-all ${errors.productName ? 'ring-2 ring-red-500' : ''}`}
+                                            className={`w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 md:py-4 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:bg-white dark:focus:bg-gray-800 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 dark:focus:border-orange-500 transition-all ${errors.productName ? 'ring-2 ring-red-500 dark:ring-red-400' : ''}`}
                                             placeholder="e.g. Minimalist Ceramic Vessel"
                                             type="text"
                                         />
-                                        {errors.productName && <p className="text-red-500 text-xs mt-1">{errors.productName}</p>}
+                                        {errors.productName && <p className="text-red-500 dark:text-red-400 text-xs mt-1">{errors.productName}</p>}
                                     </div>
 
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                                         <div>
                                             <label className="block text-[10px] uppercase tracking-widest text-gray-500 dark:text-gray-400 font-bold mb-2">
-                                                Category <span className="text-red-500">*</span>
+                                                Category <span className="text-red-500 dark:text-red-400">*</span>
                                             </label>
                                             <div className="relative">
                                                 <select
@@ -316,7 +315,7 @@ export default function AddProduct() {
                                                 name="brand"
                                                 value={formData.brand}
                                                 onChange={handleInputChange}
-                                                className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 md:py-4 text-sm text-gray-900 dark:text-white focus:bg-white dark:focus:bg-gray-800 focus:ring-2 focus:ring-orange-500/20 transition-all"
+                                                className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 md:py-4 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:bg-white dark:focus:bg-gray-800 focus:ring-2 focus:ring-orange-500/20 transition-all"
                                                 placeholder="e.g. Nike, Apple, IKEA"
                                                 type="text"
                                             />
@@ -333,7 +332,7 @@ export default function AddProduct() {
                                         <input
                                             value={formData.tags.join(', ')}
                                             onChange={handleTagsChange}
-                                            className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 md:py-4 text-sm text-gray-900 dark:text-white focus:bg-white dark:focus:bg-gray-800 focus:ring-2 focus:ring-orange-500/20 transition-all"
+                                            className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 md:py-4 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:bg-white dark:focus:bg-gray-800 focus:ring-2 focus:ring-orange-500/20 transition-all"
                                             placeholder="handmade, ceramic, minimalist"
                                             type="text"
                                         />
@@ -394,7 +393,7 @@ export default function AddProduct() {
                         <aside className="col-span-12 lg:col-span-4 space-y-6 md:space-y-8">
                             {/* Preview Card 1: Product Listing Page View */}
                             <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-800">
-                                <div className="bg-gradient-to-r from-orange-50 to-orange-100/30 dark:from-orange-950/30 dark:to-orange-900/20 p-3 md:p-4 border-b border-gray-100 dark:border-gray-800">
+                                <div className="bg-linear-to-r from-orange-50 to-orange-100/30 dark:from-orange-950/30 dark:to-orange-900/20 p-3 md:p-4 border-b border-gray-100 dark:border-gray-800">
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-600 dark:text-orange-500">Live Preview</span>
@@ -431,7 +430,7 @@ export default function AddProduct() {
                                                 </p>
                                             )}
                                             <div className="flex items-center justify-between mt-1">
-                                                <div className="flex text-orange-500">
+                                                <div className="flex text-orange-500 dark:text-orange-400">
                                                     <IoMdStar />
                                                     <IoMdStar />
                                                     <IoMdStar />
@@ -449,7 +448,7 @@ export default function AddProduct() {
 
                             {/* Preview Card 2: Product Details Page View */}
                             <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-800">
-                                <div className="bg-gradient-to-r from-orange-50 to-orange-100/30 dark:from-orange-950/30 dark:to-orange-900/20 p-3 md:p-4 border-b border-gray-100 dark:border-gray-800">
+                                <div className="bg-linear-to-r from-orange-50 to-orange-100/30 dark:from-orange-950/30 dark:to-orange-900/20 p-3 md:p-4 border-b border-gray-100 dark:border-gray-800">
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-600 dark:text-orange-500">Live Preview</span>
@@ -464,7 +463,7 @@ export default function AddProduct() {
                                 </div>
                                 <div className="p-4">
                                     <div className="flex gap-3">
-                                        <div className="w-16 h-16 md:w-20 md:h-20 rounded-lg bg-gray-100 dark:bg-gray-800 overflow-hidden flex-shrink-0">
+                                        <div className="w-16 h-16 md:w-20 md:h-20 rounded-lg bg-gray-100 dark:bg-gray-800 overflow-hidden shrink-0">
                                             <img
                                                 className="w-full h-full object-cover"
                                                 src={previewImage || 'https://via.placeholder.com/80x80?text=No+Image'}
@@ -476,7 +475,7 @@ export default function AddProduct() {
                                                 {formData.productName || "Product Name"}
                                             </h3>
                                             <div className="flex items-center gap-2 mt-1">
-                                                <div className="flex text-orange-500">
+                                                <div className="flex text-orange-500 dark:text-orange-400">
                                                     {[...Array(4)].map((_, i) => (
                                                         <IoMdStar key={i} className="text-xs" />
                                                     ))}
@@ -524,7 +523,7 @@ export default function AddProduct() {
 
                             {/* Preview Card 3: Cart/Quick View */}
                             <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-800">
-                                <div className="bg-gradient-to-r from-orange-50 to-orange-100/30 dark:from-orange-950/30 dark:to-orange-900/20 p-3 md:p-4 border-b border-gray-100 dark:border-gray-800">
+                                <div className="bg-linear-to-r from-orange-50 to-orange-100/30 dark:from-orange-950/30 dark:to-orange-900/20 p-3 md:p-4 border-b border-gray-100 dark:border-gray-800">
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-600 dark:text-orange-500">Live Preview</span>
@@ -539,7 +538,7 @@ export default function AddProduct() {
                                 </div>
                                 <div className="p-4">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-800 overflow-hidden flex-shrink-0">
+                                        <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-800 overflow-hidden shrink-0">
                                             <img
                                                 className="w-full h-full object-cover"
                                                 src={previewImage || 'https://via.placeholder.com/48x48?text=No+Image'}
@@ -555,9 +554,9 @@ export default function AddProduct() {
                                                     ${formData.basePrice || "0.00"}
                                                 </span>
                                                 <div className="flex items-center gap-2">
-                                                    <button type="button" className="w-5 h-5 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-xs text-gray-600 dark:text-gray-400">-</button>
+                                                    <button type="button" className="w-5 h-5 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-xs text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700">-</button>
                                                     <span className="text-xs w-4 text-center text-gray-900 dark:text-white">1</span>
-                                                    <button type="button" className="w-5 h-5 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-xs text-gray-600 dark:text-gray-400">+</button>
+                                                    <button type="button" className="w-5 h-5 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-xs text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700">+</button>
                                                 </div>
                                             </div>
                                         </div>
