@@ -24,7 +24,7 @@ export default async function ProductGrid({ category, sort }) {
     let products = [];
     try {
         const response = await fetch(apiUrlWithParams, {
-            cache: 'force-cache',
+            cache: 'no-store',
         });
 
         if (!response.ok) {

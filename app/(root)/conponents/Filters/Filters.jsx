@@ -53,11 +53,11 @@ export default function Filters() {
     // ক্যাটাগরি লিস্ট
     const categories = [
         { label: 'All', value: 'All' },
-        { label: 'Clothing & Fashion', value: 'ClothingFashion' },
-        { label: 'Baby Products', value: 'BabyProducts' },
+        { label: 'Clothing & Fashion', value: 'ClothingF' },
+        { label: 'Baby Products', value: 'Baby' },
         { label: 'Fitness', value: 'Fitness' },
-        { label: 'Home & Decor', value: 'HomeDecor' },
-        { label: 'Tech & Gadgets', value: 'TechGadgets' }
+        { label: 'Home & Decor', value: 'Home' },
+        { label: 'Tech & Gadgets', value: 'Tech' }
     ];
 
     return (

@@ -42,11 +42,11 @@ export default function AddProduct() {
     const [descriptionHtml, setDescriptionHtml] = useState('');
 
     const categories = [
-        'ClothingFashion',
-        'BabyProducts',
+        'Clothing',
+        'Baby',
         'Fitness',
-        'HomeDecor',
-        'TechGadgets'
+        'Home',
+        'Tech'
     ];
 
     const categoryIcons = {
