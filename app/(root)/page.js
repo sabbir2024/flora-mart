@@ -7,14 +7,11 @@ import Filters from "./conponents/Filters/Filters";
 import Hero from "./conponents/hero/Hero";
 
 export default async function Page({ searchParams }) {
-    // searchParams ইতিমধ্যেই একটি Promise, একবার await করলেই হবে
     const resolvedSearchParams = await searchParams;
 
-    // সঠিকভাবে মান নিন
-    const category = resolvedSearchParams?.category || 'Home';
+    // Change default from 'Home' to 'All' to match Filters
+    const category = resolvedSearchParams?.category || 'All';
     const sort = resolvedSearchParams?.sort || 'Latest';
-
-    console.log('Page received:', { category, sort });
 
     return (
         <Container>
