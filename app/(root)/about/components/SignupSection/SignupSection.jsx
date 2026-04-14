@@ -47,12 +47,13 @@ export default function SignupSection({ onSuccess }) {
                 email: formData.email,
                 password: formData.password
             });
-            if (result._id) {
+            if (result && result._id) {
                 Swal.fire({
                     icon: 'success',
                     title: 'Signup Successful',
                     text: 'Your account has been created successfully. Please login to continue.',
                 })
+
                 router.push('/about#login')
             } else {
                 Swal.fire({
