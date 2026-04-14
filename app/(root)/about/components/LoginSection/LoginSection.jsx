@@ -32,8 +32,9 @@ export default function LoginSection({ onSuccess }) {
                 password: formData.password,
                 redirect: false
             });
+            console.log('SignIn result:', result);
 
-            if (result.error) {
+            if (!result.ok) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Login Failed',
