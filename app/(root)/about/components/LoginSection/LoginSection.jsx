@@ -6,7 +6,7 @@ import { signIn } from "next-auth/react"
 import Swal from 'sweetalert2';
 import { useRouter } from 'next/navigation';
 
-export default function LoginSection({ onSuccess }) {
+export default function LoginSection() {
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -32,8 +32,15 @@ export default function LoginSection({ onSuccess }) {
                 password: formData.password,
                 redirect: false
             });
-            console.log('SignIn result:', result);
 
+            if (!result) {
+                throw new Error('No response from server');
+            }
+
+            if (!result.ok) {
+                // Safely access error message with fallback
+                const errorMessage = result.error || 'Invalid email or password. Please try again.';
+            }
             if (!result.ok) {
                 Swal.fire({
                     icon: 'error',
