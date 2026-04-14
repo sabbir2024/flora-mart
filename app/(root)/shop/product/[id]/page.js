@@ -57,10 +57,15 @@ export default async function Page({ params }) {
                     </li>
                 </ul>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2">
-                <ImageHover imageUrl={imageUrl} />
-
-                <ProductInfo product={product} />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div>
+                    <ImageHover imageUrl={imageUrl} />
+                </div>
+                <div className="relative">
+                    <div className="lg:sticky lg:top-24">
+                        <ProductInfo product={product} />
+                    </div>
+                </div>
             </div>
             <NewsMarquee />
 

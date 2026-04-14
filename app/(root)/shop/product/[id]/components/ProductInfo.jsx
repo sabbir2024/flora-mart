@@ -98,8 +98,12 @@ export default function ProductInfoTabs({ product }) {
     };
 
     return (
-        <div className="card w-full bg-white dark:bg-zinc-800 shadow-xl rounded-2xl overflow-hidden">
+        <div className="card w-full bg-white/80 dark:bg-zinc-800/80 shadow-2xl rounded-3xl overflow-hidden backdrop-blur-lg border border-white/40 dark:border-zinc-700/60 transition-all duration-300 hover:scale-[1.01] hover:shadow-3xl relative">
             <div className="card-body p-4 sm:p-6">
+                {/* Floating glassmorphism accent */}
+                <div className="absolute -top-10 -right-10 w-32 h-32 bg-orange-400/20 rounded-full blur-2xl z-0 pointer-events-none"></div>
+                <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-orange-600/10 rounded-full blur-2xl z-0 pointer-events-none"></div>
+                {/* ...existing code... */}
                 {/* Category Badge */}
                 <p className="text-orange-600 dark:text-orange-500 text-xs sm:text-sm font-bold tracking-wider uppercase">
                     {getCategory()}
@@ -262,12 +266,16 @@ export default function ProductInfoTabs({ product }) {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row gap-3 mt-6">
+                <div className="flex flex-col sm:flex-row gap-3 mt-6 relative z-10">
                     <Link
                         href={`/checkout/${product?._id}`}
                         className="flex-1"
                     >
-                        <button className="w-full py-3 rounded-xl bg-gradient-to-r from-orange-600 to-orange-500 dark:from-orange-500 dark:to-orange-600 text-white font-bold uppercase tracking-wider text-sm hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all duration-200">
+                        <button className="w-full py-3 rounded-xl bg-gradient-to-r from-orange-600 to-orange-500 dark:from-orange-500 dark:to-orange-600 text-white font-bold uppercase tracking-wider text-sm shadow-lg hover:shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 group relative overflow-hidden">
+                            <span className="absolute left-0 top-0 w-full h-full bg-white/10 opacity-0 group-hover:opacity-100 transition-all duration-300 animate-pulse pointer-events-none"></span>
+                            <svg className="w-5 h-5 mr-2 animate-bounce group-hover:animate-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.35 2.7A2 2 0 0 0 7.48 19h9.04a2 2 0 0 0 1.83-1.3L17 13M7 13V6h13" />
+                            </svg>
                             এখনই কিনুন
                         </button>
                     </Link>

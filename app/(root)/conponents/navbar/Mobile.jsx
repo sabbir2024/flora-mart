@@ -10,8 +10,9 @@ import {
     HiOutlineInformationCircle,
     HiOutlineUser
 } from 'react-icons/hi';
+import { signOut } from 'next-auth/react';
 
-export default function Mobile({ user, isLoading }) {
+export default function Mobile({ user, isLoading, isAuthenticated }) {
     const pathname = usePathname();
     const router = useRouter();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -34,11 +35,11 @@ export default function Mobile({ user, isLoading }) {
             label: 'Cart',
             icon: <HiOutlineShoppingCart className="w-6 h-6 md:w-7 md:h-7" />
         },
-        {
+        ...(!isAuthenticated ? [{
             href: '/about',
             label: 'About',
             icon: <HiOutlineInformationCircle className="w-6 h-6 md:w-7 md:h-7" />
-        }
+        }] : [])
     ];
 
     const isActive = (href) => {
@@ -129,7 +130,7 @@ export default function Mobile({ user, isLoading }) {
                             <div className="w-6 h-6 md:w-7 md:h-7 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse"></div>
                             <div className="w-8 h-2 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
                         </div>
-                    ) : user ? (
+                    ) : isAuthenticated && (
                         <div className="relative" ref={dropdownRef}>
                             <button
                                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -193,7 +194,7 @@ export default function Mobile({ user, isLoading }) {
                                     <li><hr className="my-1 border-gray-200 dark:border-gray-700" /></li>
                                     <li>
                                         <button
-                                            onClick={() => handleNavigation('/logout')}
+                                            onClick={() => signOut()}
                                             className="w-full text-left text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                                         >
                                             Logout
@@ -202,24 +203,6 @@ export default function Mobile({ user, isLoading }) {
                                 </ul>
                             )}
                         </div>
-                    ) : (
-                        // Non-logged in state
-                        <button
-                            onClick={() => handleNavigation('/login')}
-                            className="flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-lg transition-all text-gray-600 dark:text-gray-400 hover:text-orange-600 dark:hover:text-orange-500 hover:bg-gray-100 dark:hover:bg-gray-700"
-                        >
-                            <svg className="w-6 h-6 md:w-7 md:h-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                                <circle cx="12" cy="7" r="4" />
-                            </svg>
-                            <span className="text-xs font-medium">
-                                {loadingLink === '/login' ? (
-                                    <span className="loading loading-infinity loading-xs text-orange-600 dark:text-orange-500"></span>
-                                ) : (
-                                    'Login'
-                                )}
-                            </span>
-                        </button>
                     )}
                 </div>
             </div>

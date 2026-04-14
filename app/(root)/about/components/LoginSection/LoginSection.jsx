@@ -2,6 +2,9 @@
 'use client';
 
 import { useState } from 'react';
+import { signIn } from "next-auth/react"
+import Swal from 'sweetalert2';
+import { useRouter } from 'next/navigation';
 
 export default function LoginSection({ onSuccess }) {
     const [formData, setFormData] = useState({
@@ -10,6 +13,8 @@ export default function LoginSection({ onSuccess }) {
     });
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+
+    const router = useRouter();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -21,32 +26,42 @@ export default function LoginSection({ onSuccess }) {
         e.preventDefault();
         setIsLoading(true);
         setError('');
+        try {
+            const result = await signIn('credentials', {
+                email: formData.email,
+                password: formData.password,
+                redirect: false
+            });
 
-        // try {
-        //     const response = await fetch('/api/login', {
-        //         method: 'POST',
-        //         headers: { 'Content-Type': 'application/json' },
-        //         body: JSON.stringify(formData)
-        //     });
+            if (result.error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Login Failed',
+                    text: result.error || 'Invalid email or password. Please try again.',
+                });
 
-        //     const data = await response.json();
-
-        //     if (response.ok) {
-        //         localStorage.setItem('user', JSON.stringify(data.user));
-        //         onSuccess?.(data.user);
-        //         window.location.reload();
-        //     } else {
-        //         setError(data.message || 'Login failed. Please try again.');
-        //     }
-        // } catch (error) {
-        //     setError('Network error. Please try again.');
-        // } finally {
-        //     setIsLoading(false);
-        // }
+            } else {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Login Successful',
+                    text: 'You have successfully logged in.',
+                });
+                router.push('/dashboard');
+            }
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Login Failed',
+                text: error.message || 'An error occurred during login. Please try again.',
+            });
+        } finally {
+            setIsLoading(false);
+        }
+        // console.log('Submitting login with:', formData);
     };
 
     return (
-        <section id="login" className="max-w-7xl mx-auto px-4 md:px-6  font-bold grid grid-cols-1 lg:grid-cols-2 grid-flow-row gap-10 items-center">
+        <section id="login" className="max-w-7xl mx-auto px-4 md:px-6  font-bold grid grid-cols-1 lg:grid-cols-2  gap-10 items-center">
             <div>
                 <h2 className="text-3xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-white">
                     Welcome Back!

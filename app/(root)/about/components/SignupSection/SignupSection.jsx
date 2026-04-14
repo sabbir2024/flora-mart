@@ -2,6 +2,9 @@
 'use client';
 
 import { useState } from 'react';
+import { postUser } from '../../../../actions/server/auth';
+import Swal from 'sweetalert2';
+import { useRouter } from 'next/navigation';
 
 export default function SignupSection({ onSuccess }) {
     const [formData, setFormData] = useState({
@@ -12,6 +15,8 @@ export default function SignupSection({ onSuccess }) {
     });
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+
+    const router = useRouter();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -36,6 +41,37 @@ export default function SignupSection({ onSuccess }) {
             return;
         }
 
+        try {
+            const result = await postUser({
+                name: formData.name,
+                email: formData.email,
+                password: formData.password
+            });
+            if (result._id) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Signup Successful',
+                    text: 'Your account has been created successfully. Please login to continue.',
+                })
+                router.push('/about#login')
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Signup Failed',
+                    text: 'Email already exists. Please try with a different email.',
+                });
+            }
+
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Signup Failed',
+                text: error.message || 'An error occurred during signup. Please try again.',
+            });
+
+        } finally {
+            setIsLoading(false);
+        }
         // try {
         //     const response = await fetch('/api/signup', {
         //         method: 'POST',

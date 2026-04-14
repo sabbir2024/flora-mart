@@ -8,12 +8,16 @@ import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import Whatsapp from "./Whatsapp";
+import { signOut, useSession } from "next-auth/react";
 
 export default function Navbar() {
     const [showCall, setShowCall] = useState(true);
     const [loadingLink, setLoadingLink] = useState(null);
     const pathname = usePathname();
     const router = useRouter();
+
+    const session = useSession();
+    const isAuthenticated = session.status === 'authenticated';
 
     const user = [
         {
@@ -153,22 +157,25 @@ export default function Navbar() {
                                     </Link>
                                 )}
                             </li>
-                            <li>
-                                {loadingLink === '/about' ? (
-                                    <span className="flex items-center gap-2 text-gray-500">
-                                        <span className="loading loading-infinity loading-xs text-orange-600"></span>
+                            {(!isAuthenticated) &&
+                                <li>
+                                    {loadingLink === '/about' ? (
+                                        <span className="flex items-center gap-2 text-gray-500">
+                                            <span className="loading loading-infinity loading-xs text-orange-600"></span>
 
-                                    </span>
-                                ) : (
-                                    <Link
-                                        href="/about"
-                                        onClick={(e) => handleNavigation('/about', e)}
-                                        className={getLinkClass('/about')}
-                                    >
-                                        About
-                                    </Link>
-                                )}
-                            </li>
+                                        </span>
+                                    ) : (
+                                        <Link
+                                            href="/about"
+                                            onClick={(e) => handleNavigation('/about', e)}
+                                            className={getLinkClass('/about')}
+                                        >
+                                            About
+                                        </Link>
+                                    )}
+                                </li>
+                            }
+
                         </ul>
                     </div>
 
@@ -229,7 +236,7 @@ export default function Navbar() {
                         </div>
 
                         {/* প্রোফাইল ড্রপডাউন */}
-                        {user && (
+                        {isAuthenticated && (
                             <div className="dropdown dropdown-end">
                                 <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
                                     <div className={`w-10 rounded-full ring-2 ring-offset-2 ${isActive('/profile') || isActive('/orders') || isActive('/settings')
@@ -308,13 +315,13 @@ export default function Navbar() {
 
                                             </span>
                                         ) : (
-                                            <Link
-                                                href="/logout"
-                                                onClick={(e) => handleNavigation('/logout', e)}
+                                            <span
+
+                                                onClick={() => signOut()}
                                                 className="text-red-500 hover:text-red-700"
                                             >
                                                 Logout
-                                            </Link>
+                                            </span>
                                         )}
                                     </li>
                                 </ul>
@@ -325,7 +332,7 @@ export default function Navbar() {
             </div>
 
             {/* মোবাইল ডক - শুধু মোবাইলে দেখাবে */}
-            <Mobile user={user} isLoading={false} />
+            <Mobile user={user} isLoading={false} isAuthenticated={isAuthenticated} />
         </Container>
     );
 }
