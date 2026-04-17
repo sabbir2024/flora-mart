@@ -33,29 +33,22 @@ export default function LoginSection() {
                 redirect: false
             });
 
-            if (!result) {
-                throw new Error('No response from server');
-            }
-
-            if (!result.ok) {
-                // Safely access error message with fallback
-                const errorMessage = result.error || 'Invalid email or password. Please try again.';
-            }
-            if (!result.ok) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Login Failed',
-                    text: result.error || 'Invalid email or password. Please try again.',
-                });
-
-            } else {
+            if (result.ok) {
                 Swal.fire({
                     icon: 'success',
                     title: 'Login Successful',
                     text: 'You have successfully logged in.',
                 });
                 router.push('/dashboard');
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Login Failed',
+                    text: 'Invalid email or password. Please try again.',
+                });
             }
+
+
         } catch (error) {
             Swal.fire({
                 icon: 'error',

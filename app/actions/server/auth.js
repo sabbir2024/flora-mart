@@ -39,7 +39,7 @@ export const postUser = async (payload) => {
     return null;
 }
 
-export const logoutUser = async (payload) => {
+export const logIntUser = async (payload) => {
     const { email, password } = payload;
 
     //check if email and password are provided
