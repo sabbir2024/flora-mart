@@ -356,7 +356,7 @@ export default function Mycard({ bookings }) {
                                     <p className="font-medium text-gray-800 dark:text-white text-sm">{booking.product_name}</p>
                                     <div className="flex justify-between items-center mt-2 text-sm">
                                         <span className="dark:text-gray-300">পরিমাণ: <span className="font-bold text-orange-600 dark:text-orange-500">{booking.quantity}</span></span>
-                                        <span className="dark:text-gray-300">প্রতি পিস: ৳{booking.product_price}</span>
+                                        <span className="dark:text-gray-300">প্রতি পিস: ৳{booking?.basePrice}</span>
                                     </div>
                                 </div>
 
