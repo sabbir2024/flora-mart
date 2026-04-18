@@ -16,8 +16,9 @@ export default function Navbar() {
     const pathname = usePathname();
     const router = useRouter();
 
-    const session = useSession();
-    const isAuthenticated = session.status === 'authenticated';
+    const { data: session, status } = useSession();
+
+    const isAuthenticated = status === 'authenticated';
 
     const user = [
         {
@@ -239,15 +240,8 @@ export default function Navbar() {
                         {isAuthenticated && (
                             <div className="dropdown dropdown-end">
                                 <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-                                    <div className={`w-10 rounded-full ring-2 ring-offset-2 ${isActive('/profile') || isActive('/orders') || isActive('/settings')
-                                        ? 'ring-orange-600'
-                                        : 'ring-gray-400 dark:ring-gray-600'
-                                        }`}>
-                                        <img
-                                            alt="Profile"
-                                            src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                                            className="object-cover"
-                                        />
+                                    <div className="w-8 h-8 rounded-full bg-linear-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+                                        <span className="text-white text-xs font-bold">{session?.user?.name?.charAt(0)?.toUpperCase()}</span>
                                     </div>
                                 </div>
                                 <ul

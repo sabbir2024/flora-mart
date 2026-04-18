@@ -50,6 +50,8 @@ export const logIntUser = async (payload) => {
 
     // check if user e in database
     const user = await userCollection.findOne({ email });
+    console.log('server', user)
+
     if (!user) return null;
 
     //password comparing
@@ -57,6 +59,7 @@ export const logIntUser = async (payload) => {
     if (!isPasswordValid) return null;
 
     if (isPasswordValid) {
+
         return user
     } else {
         return null

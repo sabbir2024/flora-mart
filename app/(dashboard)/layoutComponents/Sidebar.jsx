@@ -4,10 +4,13 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 export default function Sidebar() {
     const pathname = usePathname();
     const [isCollapsed, setIsCollapsed] = useState(false);
+    const { data: session, status } = useSession();
+
 
     const menuItems = [
         {
@@ -105,7 +108,7 @@ export default function Sidebar() {
                 </div>
 
                 {/* Navigation Menu */}
-                <nav className="flex-1 px-3 py-4 space-y-1">
+                {session?.user?.role === 'admin' && <nav className="flex-1 px-3 py-4 space-y-1">
                     {menuItems.map((item) => {
                         const active = isActive(item.href);
                         return (
@@ -134,32 +137,37 @@ export default function Sidebar() {
                             </Link>
                         );
                     })}
+                </nav>}
+                {session?.user?.role === 'user' && <nav>
+                    <li className="text-lg font-bold text-orange-600 dark:text-orange-500 w-full mx-auto px-2">Setting</li>
                 </nav>
-
+                }
                 {/* Bottom Section - Add Product Button & User Profile */}
                 <div className="px-3 py-4 border-t border-gray-100 dark:border-zinc-800">
                     {/* Add Product Button */}
-                    <Link href={'/dashboard/admin/add-product'}>
-                        <button className={`
+                    {session?.user?.role === 'admin' &&
+                        <Link href={'/dashboard/admin/add-product'}>
+                            <button className={`
                         w-full mb-4 bg-linear-to-r from-orange-500 to-orange-600 
                         text-white font-bold rounded-xl transition-all duration-200
                         hover:shadow-lg hover:scale-[1.02] active:scale-95
                         ${isCollapsed ? 'px-2 py-2' : 'px-4 py-2.5'}
                     `}>
-                            {!isCollapsed ? (
-                                <span className="flex items-center justify-center gap-2 text-sm">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-4">
+                                {!isCollapsed ? (
+                                    <span className="flex items-center justify-center gap-2 text-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-4">
+                                            <path d="M12 5v14M5 12h14" />
+                                        </svg>
+                                        Add Product
+                                    </span>
+                                ) : (
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-5 mx-auto">
                                         <path d="M12 5v14M5 12h14" />
                                     </svg>
-                                    Add Product
-                                </span>
-                            ) : (
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-5 mx-auto">
-                                    <path d="M12 5v14M5 12h14" />
-                                </svg>
-                            )}
-                        </button>
-                    </Link>
+                                )}
+                            </button>
+                        </Link>
+                    }
                     {/* User Profile Section */}
                     <div className={`
                         flex items-center rounded-xl p-2 transition-all duration-200
@@ -168,18 +176,21 @@ export default function Sidebar() {
                     `}>
                         <div className="relative shrink-0">
                             <div className="w-8 h-8 rounded-full bg-linear-to-br from-orange-400 to-orange-600 flex items-center justify-center">
-                                <span className="text-white text-xs font-bold">JV</span>
+                                <span className="text-white text-xs font-bold">{session?.user?.name?.charAt(0)?.toUpperCase()}</span>
                             </div>
                             <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white dark:border-zinc-900"></div>
                         </div>
 
                         {!isCollapsed && (
                             <div className="flex-1 min-w-0">
-                                <p className="text-sm font-bold text-gray-800 dark:text-gray-200 truncate">
-                                    Julian Vane
+                                <p className="text-sm font-bold text-gray-800 dark:text-gray-200 truncate uppercase">
+                                    {session?.user?.name}
                                 </p>
-                                <p className="text-[10px] text-gray-500 truncate">
-                                    Super Admin
+                                <p className="text-[10px] text-gray-500 truncate uppercase">
+                                    {session?.user?.role || 'User'}
+                                </p>
+                                <p className="text-[10px] text-gray-500 truncate ">
+                                    {session?.user?.email}
                                 </p>
                             </div>
                         )}

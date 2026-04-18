@@ -26,6 +26,7 @@ import {
 } from 'react-icons/io5';
 
 export default function Mycard({ bookings }) {
+    console.log('Received bookings:', bookings);
     const router = useRouter();
     const [selectedBookings, setSelectedBookings] = useState([]);
     const [sortBy, setSortBy] = useState('newest');
@@ -147,7 +148,7 @@ export default function Mycard({ bookings }) {
                     </div>
                     <div class="bg-gray-50 dark:bg-gray-800 p-2 rounded-lg my-2">
                         <div class="font-semibold text-orange-600 dark:text-orange-400 mb-1">📦 পণ্যের বিবরণ</div>
-                        <div class="text-xs dark:text-gray-300">${booking.product_name}</div>
+                        <div class="text-xs dark:text-gray-300">${booking.productName}</div>
                         <div class="flex justify-between mt-1 dark:text-gray-300">
                             <span>পরিমাণ: ${booking.quantity}</span>
                             <span>প্রতি পিস: ৳${booking.product_price}</span>
@@ -353,7 +354,7 @@ export default function Mycard({ bookings }) {
 
                                 {/* Product Info */}
                                 <div className="bg-orange-50 dark:bg-orange-950/30 rounded-xl p-3 mb-3">
-                                    <p className="font-medium text-gray-800 dark:text-white text-sm">{booking.product_name}</p>
+                                    <p className="font-medium text-gray-800 dark:text-white text-sm">{booking.productName}</p>
                                     <div className="flex justify-between items-center mt-2 text-sm">
                                         <span className="dark:text-gray-300">পরিমাণ: <span className="font-bold text-orange-600 dark:text-orange-500">{booking.quantity}</span></span>
                                         <span className="dark:text-gray-300">প্রতি পিস: ৳{booking?.basePrice}</span>
@@ -438,15 +439,15 @@ export default function Mycard({ bookings }) {
                                         <div className="flex flex-wrap gap-3 text-xs text-gray-500 dark:text-gray-400 mt-1">
                                             <span className="flex items-center gap-1"><IoCallOutline /> {booking.customer_phone}</span>
                                             <span className="flex items-center gap-1"><IoMailOutline /> {booking.customer_email}</span>
-                                        </div>
+                                        </div>পণ্যের তথ্য
                                     </div>
 
                                     {/* Product Info */}
                                     <div className="bg-orange-50 dark:bg-orange-950/30 rounded-xl p-3 mb-3">
-                                        <p className="font-medium text-gray-800 dark:text-white text-sm">{booking.product_name}</p>
+                                        <p className="font-medium text-gray-800 dark:text-white text-sm">{booking.productName}</p>
                                         <div className="flex justify-between items-center mt-2 text-sm">
                                             <span className="dark:text-gray-300">পরিমাণ: <span className="font-bold text-orange-600 dark:text-orange-500">{booking.quantity}</span></span>
-                                            <span className="dark:text-gray-300">প্রতি পিস: ৳{booking.product_price}</span>
+                                            <span className="dark:text-gray-300">প্রতি পিস: ৳{booking.basePrice}</span>
                                         </div>
                                     </div>
 
@@ -539,8 +540,8 @@ export default function Mycard({ bookings }) {
                                         <div className="text-xs text-gray-400 dark:text-gray-500 hidden md:block">{booking.customer_email}</div>
                                     </td>
                                     <td>
-                                        <div className="font-medium text-gray-800 dark:text-white">{booking.product_name}</div>
-                                        <div className="text-xs text-orange-600 dark:text-orange-500">৳{booking.product_price}</div>
+                                        <div className="font-medium text-gray-800 dark:text-white">{booking.productName}</div>
+                                        <div className="text-xs text-orange-600 dark:text-orange-500">{booking.product_price}</div>
                                     </td>
                                     <td>
                                         <span className="inline-flex items-center justify-center w-8 h-8 bg-orange-100 dark:bg-orange-950/50 text-orange-600 dark:text-orange-500 rounded-full font-bold text-sm">
