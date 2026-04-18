@@ -11,9 +11,12 @@ import {
     IoSettingsOutline
 } from 'react-icons/io5';
 import Link from 'next/link';
+import { signOut, useSession } from 'next-auth/react';
 
 export default function DashboardNav() {
     const [isHovered, setIsHovered] = useState(false);
+    const { data: session, status, logout } = useSession();
+
 
     const defaultUser = {
         name: 'Julian Vane',
@@ -36,10 +39,8 @@ export default function DashboardNav() {
                 <input type="text" placeholder="Search" className="input input-bordered w-24 md:w-auto" />
                 <div className="dropdown dropdown-end">
                     <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-                        <div className="w-10 rounded-full">
-                            <img
-                                alt="Tailwind CSS Navbar component"
-                                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                        <div className="w-8 h-8 rounded-full bg-linear-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+                            <span className="text-white text-xs font-bold">{session?.user?.name?.charAt(0)?.toUpperCase()}</span>
                         </div>
                     </div>
                     <ul
@@ -52,7 +53,7 @@ export default function DashboardNav() {
                             </a>
                         </li>
                         <li><a>Settings</a></li>
-                        <li><a>Logout</a></li>
+                        <li><button onClick={() => signOut()}>Logout</button></li>
                     </ul>
                 </div>
             </div>

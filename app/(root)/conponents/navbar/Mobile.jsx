@@ -12,7 +12,7 @@ import {
 } from 'react-icons/hi';
 import { signOut } from 'next-auth/react';
 
-export default function Mobile({ user, isLoading, isAuthenticated }) {
+export default function Mobile({ session, status, isLoading, isAuthenticated }) {
     const pathname = usePathname();
     const router = useRouter();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -139,15 +139,8 @@ export default function Mobile({ user, isLoading, isAuthenticated }) {
                                     : 'text-gray-600 dark:text-gray-400 hover:text-orange-600 dark:hover:text-orange-500 hover:bg-gray-100 dark:hover:bg-gray-700'
                                     }`}
                             >
-                                <div className={`w-6 h-6 md:w-7 md:h-7 rounded-full ring-2 ring-offset-1 ${isActive('/profile') || isActive('/orders') || isActive('/settings')
-                                    ? 'ring-orange-600 dark:ring-orange-500'
-                                    : 'ring-gray-400 dark:ring-gray-600'
-                                    }`}>
-                                    <img
-                                        alt="Profile"
-                                        src={user?.image || "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"}
-                                        className="w-full h-full rounded-full object-cover"
-                                    />
+                                <div className="w-8 h-8 rounded-full bg-linear-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+                                    <span className="text-white text-xs font-bold">{session?.user?.name?.charAt(0)?.toUpperCase()}</span>
                                 </div>
                                 <span className="text-xs font-medium">Account</span>
                             </button>

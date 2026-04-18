@@ -20,11 +20,7 @@ export default function Navbar() {
 
     const isAuthenticated = status === 'authenticated';
 
-    const user = [
-        {
-            email: 'dfdf',
-            role: 'admin'
-        }]
+
 
     useEffect(() => {
         let lastScrollY = window.scrollY;
@@ -326,7 +322,7 @@ export default function Navbar() {
             </div>
 
             {/* মোবাইল ডক - শুধু মোবাইলে দেখাবে */}
-            <Mobile user={user} isLoading={false} isAuthenticated={isAuthenticated} />
+            <Mobile session={session} status={status} isLoading={false} isAuthenticated={isAuthenticated} />
         </Container>
     );
 }
