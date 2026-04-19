@@ -99,7 +99,7 @@ export default function Navbar() {
                             onClick={(e) => handleNavigation('/', e)}
                             className="text-orange-600 text-xl font-bold hover:text-orange-700 dark:text-orange-500 transition-colors"
                         >
-                            Flora Mart
+                            Fabric Flora
                         </Link>
                     </div>
 

@@ -3,7 +3,7 @@ import { MongoClient, ServerApiVersion } from 'mongodb';
 
 export const collectionlist = {
     productsCollection: "products",
-    bookingsCollection: "checkout",
+    bookingsCollection: "bookings",
     sliderCollection: "banner",
     userCollection: "users"
 };

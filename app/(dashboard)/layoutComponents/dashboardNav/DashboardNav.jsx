@@ -15,16 +15,10 @@ import { signOut, useSession } from 'next-auth/react';
 
 export default function DashboardNav() {
     const [isHovered, setIsHovered] = useState(false);
-    const { data: session, status, logout } = useSession();
+    const { data: session, status } = useSession();
 
 
-    const defaultUser = {
-        name: 'Julian Vane',
-        email: 'julian.v@minimalism.co',
-        avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDh-V43BcDKnkU-xwTBMX5ter6T9vO4vXKSWRDlfbgXVPVKMrTjWmm43VvrxtRdnJwwoTFmNeuLDSaHQfuyFTxMtqDUoPhMavF6BrPNBE8eyDLr14Eiz9UhAmFu4z5ICtzPK0HmBtUNi05XJ2tsmeiK0M2MQDKxRJGpuewp2aAk7A4FjaFS-7ODxbS4KdeIEeEv4F0tN1INqhkvP3ef1ERBkEfOlykM8FvDCRqR-y9Tmm21BfaoxlKuOPV8eIAr0neEGRLgkNecpA',
-        role: 'Super Admin',
-        verified: true
-    };
+
 
     return (
         <nav className="navbar w-full bg-base-300 bg-linear-to-r from-orange-500 to-orange-600">
@@ -33,7 +27,7 @@ export default function DashboardNav() {
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor" className="my-1.5 inline-block size-4"><path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path><path d="M9 4v16"></path><path d="M14 10l2 2l-2 2"></path></svg>
             </label>
             <div className="flex-1">
-                <Link href={'/'} className="btn btn-ghost text-xl">FloraMart</Link>
+                <Link href={'/'} className="btn btn-ghost text-xl">FabriFlora</Link>
             </div>
             <div className="flex gap-2">
                 <input type="text" placeholder="Search" className="input input-bordered w-24 md:w-auto" />

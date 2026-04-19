@@ -26,7 +26,6 @@ import {
 } from 'react-icons/io5';
 
 export default function Mycard({ bookings }) {
-    console.log('Received bookings:', bookings);
     const router = useRouter();
     const [selectedBookings, setSelectedBookings] = useState([]);
     const [sortBy, setSortBy] = useState('newest');
@@ -151,13 +150,13 @@ export default function Mycard({ bookings }) {
                         <div class="text-xs dark:text-gray-300">${booking.productName}</div>
                         <div class="flex justify-between mt-1 dark:text-gray-300">
                             <span>পরিমাণ: ${booking.quantity}</span>
-                            <span>প্রতি পিস: ৳${booking.product_price}</span>
+                            <span>প্রতি পিস: ৳${booking.basePrice}</span>
                         </div>
                     </div>
                     <div class="bg-orange-50 dark:bg-orange-950/30 p-2 rounded-lg my-2">
                         <div class="flex justify-between text-sm dark:text-gray-300">
                             <span>সাবটোটাল:</span>
-                            <span>৳${booking.quantity * booking.product_price}</span>
+                            <span>৳${booking.quantity * booking.basePrice}</span>
                         </div>
                         <div class="flex justify-between text-sm dark:text-gray-300">
                             <span>ডেলিভারি চার্জ:</span>
@@ -251,14 +250,14 @@ export default function Mycard({ bookings }) {
     if (!bookings || bookings.length === 0) {
         return (
             <div className="min-h-[60vh] flex items-center justify-center p-4">
-                <div className="text-center bg-gradient-to-br from-white to-orange-50/30 dark:from-zinc-800 dark:to-orange-950/20 p-6 md:p-10 rounded-2xl shadow-xl w-full max-w-md border border-orange-100 dark:border-orange-900/50">
-                    <div className="w-20 h-20 mx-auto bg-gradient-to-r from-orange-600 to-orange-500 rounded-full flex items-center justify-center mb-4 shadow-lg">
+                <div className="text-center bg-linear-to-br from-white to-orange-50/30 dark:from-zinc-800 dark:to-orange-950/20 p-6 md:p-10 rounded-2xl shadow-xl w-full max-w-md border border-orange-100 dark:border-orange-900/50">
+                    <div className="w-20 h-20 mx-auto bg-linear-to-r from-orange-600 to-orange-500 rounded-full flex items-center justify-center mb-4 shadow-lg">
                         <IoCartOutline className="text-4xl text-white" />
                     </div>
                     <h2 className="text-xl md:text-2xl font-bold text-gray-800 dark:text-white mb-2">কোন অর্ডার পাওয়া যায়নি</h2>
                     <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 mb-6">আপনার এখনও কোন অর্ডার নেই</p>
                     <button
-                        className="px-6 py-3 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all hover:scale-105"
+                        className="px-6 py-3 bg-linear-to-r from-orange-600 to-orange-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all hover:scale-105"
                         onClick={() => router.push('/')}
                     >
                         শপিং শুরু করুন
@@ -271,7 +270,7 @@ export default function Mycard({ bookings }) {
     return (
         <div className="space-y-4 p-2 md:p-0">
             {/* Header & Controls */}
-            <div className="bg-gradient-to-r from-orange-600 to-orange-500 rounded-2xl p-4 md:p-6 text-white shadow-xl">
+            <div className="bg-linear-to-r from-orange-600 to-orange-500 rounded-2xl p-4 md:p-6 text-white shadow-xl">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
                         <h2 className="text-xl md:text-2xl font-bold flex items-center gap-2">
@@ -501,7 +500,7 @@ export default function Mycard({ bookings }) {
                 {/* Table View for Desktop */}
                 <div className={`${viewMode === 'table' ? 'block' : 'hidden'} overflow-x-auto bg-white dark:bg-zinc-800 rounded-2xl shadow-xl border border-orange-100 dark:border-orange-900/50`}>
                     <table className="table table-zebra w-full">
-                        <thead className="bg-gradient-to-r from-orange-50 to-orange-100/50 dark:from-orange-950/30 dark:to-orange-900/20">
+                        <thead className="bg-linear-to-r from-orange-50 to-orange-100/50 dark:from-orange-950/30 dark:to-orange-900/20">
                             <tr className="text-gray-700 dark:text-gray-300">
                                 <th className="w-8">
                                     <input
@@ -592,7 +591,7 @@ export default function Mycard({ bookings }) {
             </div>
 
             {/* Summary */}
-            <div className="bg-gradient-to-r from-orange-50 to-orange-100/30 dark:from-orange-950/30 dark:to-orange-900/20 rounded-2xl p-4 border border-orange-100 dark:border-orange-900/50">
+            <div className="bg-linear-to-r from-orange-50 to-orange-100/30 dark:from-orange-950/30 dark:to-orange-900/20 rounded-2xl p-4 border border-orange-100 dark:border-orange-900/50">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                     <div>
                         <p className="text-sm text-gray-600 dark:text-gray-400">সর্বমোট অর্ডার মূল্য</p>
