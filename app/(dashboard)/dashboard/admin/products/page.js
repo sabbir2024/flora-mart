@@ -1,9 +1,20 @@
+import { apiUrl } from "../../../../components/url";
 import ProductsManagement from "./components/ProductsManagement";
 
-export default function page() {
+export default async function page() {
+    let products;
+
+    try {
+        const response = await fetch(`${apiUrl}/products`);
+        const data = await response.json();
+        products = data.data;
+    } catch (error) {
+        console.log('page--error=>', error);
+    }
+
     return (
         <div>
-            <ProductsManagement />
+            <ProductsManagement products={products} />
         </div>
     );
 }

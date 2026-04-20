@@ -3,117 +3,141 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import ProductsTable from './ProductsTable';
+import Pagination from './Pagination';
+import TableHeaderControls from './TableHeaderControls';
+import { MdOutlineInventory, MdCategory } from 'react-icons/md';
+import { FaBatteryQuarter, FaBatteryEmpty, FaBatteryFull } from 'react-icons/fa6';
+// Or use from react-icons/fa:
+// import { FaBatteryLow } from 'react-icons/fa';
 
-export default function ProductsManagement() {
+export default function ProductsManagement({ products }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [sortBy, setSortBy] = useState('latest');
     const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
 
-    // Products data
-    const products = [
-        {
-            id: 1,
-            name: 'Lunar Chronograph',
-            sku: 'SOL-492-W',
-            category: 'Accessories',
-            stock: 142,
-            price: 249.00,
-            status: 'active',
-            statusColor: 'green',
-            image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCRt3cTYQ0Yn6EiJSD4RSpQ78sTGFZqvXxyJUBcbuHm9qWXrohbyZrIJOV2vVXl70o9qePnSS6xSQyn8Zc7Ja8H-FKSMhQX-29vJXQqMBaMz7Nv-Cs1qHt9a7I98n1JyL0CoPFaE8o3i9pumlLw1lFFsvKOfFqB4tQD-WUZBnmswkAZzDuGWcVljhta2dA9K-zSKmPF1lG9rOg3QqxE3U64JuLuJV5laqRjkf-omlo-GyJs81y13stOdM5VD-mbIB-bF4BMUnvzVg'
-        },
-        {
-            id: 2,
-            name: 'Obsidian Audio Gen-2',
-            sku: 'SOL-110-B',
-            category: 'Electronics',
-            stock: 8,
-            price: 399.00,
-            status: 'lowStock',
-            statusColor: 'amber',
-            image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBeI8aRSy_1mF4bukjjalgVqoG0N-3CSGX2g5iRRIkWTIjN5eBvDgDd5mVnoe0v4NTgGRwjjhcxUxOjL9OjNpJr3R8ID1otJiBNtc9GCNBt7l-4uWLzvNDeurM1A0H9D1QzvXtsGfVo2NWZygC-i2TMXIcihZF4ZkzjUh1TSV2JfGs_ClRJnFMbiYKwR_wSkk4wzdATDwgM3P5NqU52s026MvweNxh50DRBJ-e4YhGP9mvu54aQxh2id1xmp9TnTXJh-xVYABPwtw'
-        },
-        {
-            id: 3,
-            name: 'Apex Velocity Runners',
-            sku: 'SOL-882-R',
-            category: 'Footwear',
-            stock: 0,
-            price: 120.00,
-            status: 'outOfStock',
-            statusColor: 'neutral',
-            image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDFS-woW9N84mjCBLL2KMilaXwZwnpD5ZTyazwjAkL0pJ9LVWI8_O3tOkT97wV-wH26ElyBq39Igjd0wm1TJRg4BdaItPvNUfDk6-x_U1e6M-SUYdtmKdzldOqJKkr8V6b88Utat8jLZeC5fuopU6coHhEiXi78xmRyp0dBpMvQMYBYk3O217reG0MOfH5YwNywfm0WR5_niLpiqUzhxBqBroffuz6RCnHS7mMmc5Vgiq9qpbg_p12wuDUMs46Ekp60e7JDm4gHZQ'
-        },
-        {
-            id: 4,
-            name: 'Cedar & Moss Candle',
-            sku: 'SOL-041-C',
-            category: 'Home',
-            stock: 56,
-            price: 34.00,
-            status: 'draft',
-            statusColor: 'blue',
-            image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA5NwzCSBMEqK3Iiq1j4pETNm-PkaZcaf8KlVkNta_Lp2sdjh1zPxCuzMeFU-ZLbztLvnFK5r5lEZqrkLBAfdq9cDRYcEJLaipJ_o1wn40dDWgEfs0Rcru8BstRUEq1Vgv4Pmg9f88BK4zKuTNJNZ2Ju7aPkMz4cZQ5zhtbDxbYoi2ZojLZxR1I3fUsWbcCHdj7Zv5DnCL7ZjwlWpQAWsT9whG_hGbYzt0vwE2zo1gOqG5sJo8JXl-muVrWCFUSLbkr9dHH3DJUCA'
+    // Calculate dynamic stats
+    const getStats = () => {
+        const totalProducts = products.length;
+        const lowStockCount = products.filter(p => p.quantity > 0 && p.quantity < 10).length;
+        const uniqueCategories = [...new Set(products.map(p => p.category))].length;
+
+        const lastMonthProducts = products.filter(p => {
+            const createdAt = new Date(p.createdAt);
+            const oneMonthAgo = new Date();
+            oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+            return createdAt >= oneMonthAgo;
+        });
+
+        const growthRate = lastMonthProducts.length > 0 && totalProducts > 0
+            ? `+${Math.round((lastMonthProducts.length / totalProducts) * 100)}% this month`
+            : '0% this month';
+
+        return [
+            {
+                title: 'Total Products',
+                value: totalProducts.toLocaleString(),
+                change: growthRate,
+                changeType: 'positive',
+                icon: <MdOutlineInventory className="text-xl md:text-3xl" />,
+                iconBg: 'bg-surface-container-low',
+                iconColor: 'text-primary'
+            },
+            {
+                title: 'Low Stock',
+                value: lowStockCount.toString(),
+                change: lowStockCount > 0 ? 'Requires attention' : 'All stock levels healthy',
+                changeType: lowStockCount > 0 ? 'warning' : 'positive',
+                icon: <FaBatteryQuarter className="text-xl md:text-3xl" />, // Using FaBatteryQuarter instead
+                iconBg: 'bg-error-container/10',
+                iconColor: 'text-error'
+            },
+            {
+                title: 'Active Categories',
+                value: uniqueCategories.toString(),
+                change: `Across ${products.length} products`,
+                changeType: 'neutral',
+                icon: <MdCategory className="text-xl md:text-3xl" />,
+                iconBg: 'bg-tertiary-container/20',
+                iconColor: 'text-tertiary'
+            }
+        ];
+    };
+
+    const getStatusBadge = (quantity) => {
+        let statusType = '';
+        let label = '';
+
+        if (quantity === 0) {
+            statusType = 'outOfStock';
+            label = 'Out of Stock';
+        } else if (quantity < 10) {
+            statusType = 'lowStock';
+            label = 'Low Stock';
+        } else {
+            statusType = 'active';
+            label = 'Active';
         }
-    ];
 
-    const stats = [
-        {
-            title: 'Total Products',
-            value: '1,284',
-            change: '+12% this month',
-            changeType: 'positive',
-            icon: 'inventory',
-            iconBg: 'bg-surface-container-low',
-            iconColor: 'text-primary'
-        },
-        {
-            title: 'Low Stock',
-            value: '24',
-            change: 'Requires attention',
-            changeType: 'warning',
-            icon: 'production_quantity_limits',
-            iconBg: 'bg-error-container/10',
-            iconColor: 'text-error'
-        },
-        {
-            title: 'Active Categories',
-            value: '18',
-            change: 'Across 4 marketplaces',
-            changeType: 'neutral',
-            icon: 'category',
-            iconBg: 'bg-tertiary-container/20',
-            iconColor: 'text-tertiary'
-        }
-    ];
-
-    const getStatusBadge = (status, statusColor) => {
         const colors = {
-            green: 'bg-green-100 text-green-700',
-            amber: 'bg-amber-100 text-amber-700',
-            neutral: 'bg-neutral-200 text-neutral-600',
-            blue: 'bg-blue-100 text-blue-700'
-        };
-
-        const labels = {
-            active: 'Active',
-            lowStock: 'Low Stock',
-            outOfStock: 'Out of Stock',
-            draft: 'Draft'
+            active: 'bg-green-100 text-green-700',
+            lowStock: 'bg-amber-100 text-amber-700',
+            outOfStock: 'bg-red-100 text-red-700',
+            draft: 'bg-neutral-200 text-neutral-600'
         };
 
         return (
-            <span className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${colors[statusColor]}`}>
-                {labels[status]}
+            <span className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${colors[statusType]}`}>
+                {label}
             </span>
         );
     };
 
-    const filteredProducts = products.filter(product => {
-        if (searchQuery && !product.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-            !product.sku.toLowerCase().includes(searchQuery.toLowerCase())) return false;
-        return true;
-    });
+    // Filter and sort products
+    const getFilteredAndSortedProducts = () => {
+        let filtered = [...products];
+
+        // Apply search filter
+        if (searchQuery) {
+            filtered = filtered.filter(product =>
+                product.productName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                product.sku?.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+        }
+
+        // Apply sorting
+        switch (sortBy) {
+            case 'latest':
+                filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                break;
+            case 'price-high':
+                filtered.sort((a, b) => b.basePrice - a.basePrice);
+                break;
+            case 'price-low':
+                filtered.sort((a, b) => a.basePrice - b.basePrice);
+                break;
+            case 'stock':
+                filtered.sort((a, b) => a.quantity - b.quantity);
+                break;
+            default:
+                break;
+        }
+
+        return filtered;
+    };
+
+    const filteredProducts = getFilteredAndSortedProducts();
+
+    // Pagination logic with validation
+    const validTotalProducts = Array.isArray(filteredProducts) ? filteredProducts.length : 0;
+    const totalPages = validTotalProducts > 0 ? Math.ceil(validTotalProducts / itemsPerPage) : 1;
+    const validCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
+    const startIndex = (validCurrentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, validTotalProducts);
+    const currentProducts = filteredProducts.slice(startIndex, endIndex);
+
+    const stats = getStats();
 
     return (
         <main className="flex-1 min-h-screen bg-background">
@@ -131,11 +155,12 @@ export default function ProductsManagement() {
                         </div>
                         <Link href={'/dashboard/admin/add-product'}>
                             <button className="bg-linear-to-br from-primary to-primary-container text-on-primary px-6 md:px-8 py-3 md:py-4 rounded-xl font-bold shadow-xl shadow-primary/20 hover:scale-[1.03] transition-all flex items-center justify-center gap-2 group">
-
+                                {/* <span className="material-symbols-outlined text-xl">add</span> */}
                                 Add New Product
                             </button>
                         </Link>
                     </div>
+
                     {/* Summary Bento Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-12">
                         {stats.map((stat, idx) => (
@@ -161,9 +186,7 @@ export default function ProductsManagement() {
                                     </p>
                                 </div>
                                 <div className={`w-10 h-10 md:w-14 md:h-14 ${stat.iconBg} rounded-full flex items-center justify-center group-hover:scale-110 transition-transform`}>
-                                    <span className={`material-symbols-outlined text-xl md:text-3xl ${stat.iconColor}`}>
-                                        {stat.icon}
-                                    </span>
+                                    {stat.icon}
                                 </div>
                             </div>
                         ))}
@@ -172,161 +195,31 @@ export default function ProductsManagement() {
                     {/* Table Section */}
                     <div className="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
                         {/* Table Header Controls */}
-                        <div className="p-4 md:p-6 flex flex-col md:flex-row justify-between items-center gap-4 border-b border-surface-container-low">
-                            <div className="flex items-center gap-3 w-full md:w-auto">
-                                <div className="relative w-full md:w-80">
-
-                                    <input
-                                        className="w-full bg-surface-container border-none rounded-lg py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/20"
-                                        placeholder="Filter products..."
-                                        type="text"
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                    />
-                                </div>
-                                <button className="bg-surface-container-low px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 hover:bg-surface-container transition-colors whitespace-nowrap">
-                                    Filters
-                                </button>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span className="text-sm text-secondary-dim">Sort by:</span>
-                                <select
-                                    className="bg-transparent border-none text-sm font-bold focus:ring-0 cursor-pointer"
-                                    value={sortBy}
-                                    onChange={(e) => setSortBy(e.target.value)}
-                                >
-                                    <option value="latest">Latest Added</option>
-                                    <option value="price-high">Price: High to Low</option>
-                                    <option value="price-low">Price: Low to High</option>
-                                    <option value="stock">Stock Level</option>
-                                </select>
-                            </div>
-                        </div>
+                        <TableHeaderControls
+                            searchQuery={searchQuery}
+                            setSearchQuery={setSearchQuery}
+                            sortBy={sortBy}
+                            setSortBy={setSortBy}
+                        />
 
                         {/* Products Table */}
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse min-w-200">
-                                <thead>
-                                    <tr className="bg-surface-container-low/30">
-                                        <th className="px-4 md:px-6 py-3 md:py-4 text-[10px] md:text-xs font-bold uppercase tracking-widest text-outline">
-                                            Product
-                                        </th>
-                                        <th className="px-4 md:px-6 py-3 md:py-4 text-[10px] md:text-xs font-bold uppercase tracking-widest text-outline">
-                                            Category
-                                        </th>
-                                        <th className="px-4 md:px-6 py-3 md:py-4 text-[10px] md:text-xs font-bold uppercase tracking-widest text-outline text-center">
-                                            Stock
-                                        </th>
-                                        <th className="px-4 md:px-6 py-3 md:py-4 text-[10px] md:text-xs font-bold uppercase tracking-widest text-outline">
-                                            Price
-                                        </th>
-                                        <th className="px-4 md:px-6 py-3 md:py-4 text-[10px] md:text-xs font-bold uppercase tracking-widest text-outline">
-                                            Status
-                                        </th>
-                                        <th className="px-4 md:px-6 py-3 md:py-4 text-[10px] md:text-xs font-bold uppercase tracking-widest text-outline text-right">
-                                            Actions
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-surface-container-low">
-                                    {filteredProducts.map((product) => (
-                                        <tr key={product.id} className="hover:bg-surface-container-low/20 transition-colors group">
-                                            <td className="px-4 md:px-6 py-4">
-                                                <div className="flex items-center gap-3 md:gap-4">
-                                                    <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl overflow-hidden bg-surface-container shrink-0">
-                                                        <img
-                                                            alt={product.name}
-                                                            className="w-full h-full object-cover"
-                                                            src={product.image}
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <p className="font-bold text-on-surface text-sm md:text-base">
-                                                            {product.name}
-                                                        </p>
-                                                        <p className="text-[10px] md:text-xs text-secondary-dim uppercase tracking-tighter">
-                                                            SKU: {product.sku}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-4 md:px-6 py-4 text-xs md:text-sm font-medium text-secondary-dim">
-                                                {product.category}
-                                            </td>
-                                            <td className="px-4 md:px-6 py-4 text-center">
-                                                <span className={`text-sm font-bold ${product.stock === 0 ? 'text-error' :
-                                                    product.stock < 10 ? 'text-amber-600' : 'text-on-surface'
-                                                    }`}>
-                                                    {product.stock}
-                                                </span>
-                                            </td>
-                                            <td className="px-4 md:px-6 py-4 text-sm font-bold text-on-surface">
-                                                ${product.price.toFixed(2)}
-                                            </td>
-                                            <td className="px-4 md:px-6 py-4">
-                                                {getStatusBadge(product.status, product.statusColor)}
-                                            </td>
-                                            <td className="px-4 md:px-6 py-4 text-right">
-                                                <div className="flex items-center justify-end gap-1 md:gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <button className="p-1.5 md:p-2 hover:bg-surface-container rounded-lg text-secondary-dim transition-colors">
-                                                        <span className="material-symbols-outlined text-base md:text-lg">edit</span>
-                                                    </button>
-                                                    <button className="p-1.5 md:p-2 hover:bg-error-container/10 rounded-lg text-error transition-colors">
-                                                        <span className="material-symbols-outlined text-base md:text-lg">delete</span>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-
-                            {filteredProducts.length === 0 && (
-                                <div className="text-center py-12">
-                                    <p className="text-secondary-dim">No products found</p>
-                                </div>
-                            )}
-                        </div>
+                        <ProductsTable
+                            filteredProducts={currentProducts}
+                            getStatusBadge={getStatusBadge}
+                        />
 
                         {/* Pagination */}
-                        <div className="p-4 md:p-6 border-t border-surface-container-low flex flex-col sm:flex-row justify-between items-center gap-4">
-                            <p className="text-xs md:text-sm text-secondary-dim">
-                                Showing <span className="font-bold text-on-surface">1-{filteredProducts.length}</span> of{' '}
-                                <span className="font-bold text-on-surface">1,284</span> products
-                            </p>
-                            <div className="flex items-center gap-1 md:gap-2">
-                                <button
-                                    className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-lg border border-outline-variant/30 text-secondary-dim hover:bg-surface-container-low transition-colors disabled:opacity-30"
-                                    disabled
-                                >
-                                </button>
-                                <button className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-lg bg-primary text-on-primary font-bold shadow-md shadow-primary/20 text-sm md:text-base">
-                                    1
-                                </button>
-                                <button className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-lg hover:bg-surface-container-low text-on-surface transition-colors text-sm md:text-base">
-                                    2
-                                </button>
-                                <button className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-lg hover:bg-surface-container-low text-on-surface transition-colors text-sm md:text-base">
-                                    3
-                                </button>
-                                <span className="px-1 md:px-2 text-outline text-sm">...</span>
-                                <button className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-lg hover:bg-surface-container-low text-on-surface transition-colors text-sm md:text-base">
-                                    321
-                                </button>
-                                <button className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-lg border border-outline-variant/30 text-secondary-dim hover:bg-surface-container-low transition-colors">
-                                </button>
-                            </div>
-                        </div>
+                        <Pagination
+                            currentPage={validCurrentPage}
+                            setCurrentPage={setCurrentPage}
+                            totalPages={totalPages}
+                            totalItems={validTotalProducts}
+                            startIndex={startIndex}
+                            endIndex={endIndex}
+                        />
                     </div>
                 </div>
             </div>
-
-            {/* Footer */}
-            <footer className="py-6 md:py-8 text-center border-t border-surface-container-low mt-8">
-                <p className="text-[10px] md:text-xs text-outline font-medium tracking-wide">
-                    © 2024 Solaris Commerce Systems. All rights reserved.
-                </p>
-            </footer>
         </main>
     );
 }

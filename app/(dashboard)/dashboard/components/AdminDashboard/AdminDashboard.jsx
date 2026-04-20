@@ -155,7 +155,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className="flex items-center gap-3 w-full sm:w-auto">
                         <div className="bg-surface-container-low rounded-xl px-3 sm:px-4 py-2 flex items-center gap-2 flex-1 sm:flex-initial">
-                            <span className="material-symbols-outlined text-on-surface-variant text-sm">search</span>
+                            {/* <span className="material-symbols-outlined text-on-surface-variant text-sm">search</span> */}
                             <input
                                 className="bg-transparent border-none text-xs focus:ring-0 focus:outline-none placeholder:text-on-surface-variant/50 w-full sm:w-32 md:w-48"
                                 placeholder="Search product..."
@@ -164,9 +164,9 @@ export default function AdminDashboard() {
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
                         </div>
-                        <button className="bg-secondary-container text-on-secondary-container font-bold text-xs px-4 sm:px-5 py-2 rounded-xl hover:bg-surface-container-high transition-colors whitespace-nowrap">
+                        {/* <button className="bg-secondary-container text-on-secondary-container font-bold text-xs px-4 sm:px-5 py-2 rounded-xl hover:bg-surface-container-high transition-colors whitespace-nowrap">
                             Filter
-                        </button>
+                        </button> */}
                     </div>
                 </div>
 
