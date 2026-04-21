@@ -11,7 +11,7 @@ import { FaBatteryQuarter, FaBatteryEmpty, FaBatteryFull } from 'react-icons/fa6
 // Or use from react-icons/fa:
 // import { FaBatteryLow } from 'react-icons/fa';
 
-export default function ProductsManagement({ products }) {
+export default function ProductsManagement({ products = [] }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [sortBy, setSortBy] = useState('latest');
     const [currentPage, setCurrentPage] = useState(1);
