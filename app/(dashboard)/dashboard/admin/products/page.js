@@ -5,7 +5,9 @@ export default async function page() {
     let products;
 
     try {
-        const response = await fetch(`${apiUrl}/products`);
+        const response = await fetch(`${apiUrl}/products`, {
+            cache: 'no-store'
+        });
         const data = await response.json();
         products = data.data;
     } catch (error) {

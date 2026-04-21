@@ -5,7 +5,7 @@ import EditBtn from "./EditBtn";
 export default function ProductsTable({ filteredProducts, getStatusBadge }) {
     return (
         <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse min-w-[800px]">
+            <table className="w-full text-left border-collapse min-w-200">
                 <thead>
                     <tr className="bg-surface-container-low/30">
                         <th className="px-4 md:px-6 py-3 md:py-4 text-[10px] md:text-xs font-bold uppercase tracking-widest text-outline">
@@ -82,7 +82,7 @@ export default function ProductsTable({ filteredProducts, getStatusBadge }) {
                                 </div>
                             </td>
                             <td className="px-4 md:px-6 py-4 text-right">
-                                <div className="flex items-center justify-end gap-1 md:gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div className="flex items-center justify-end gap-1 md:gap-2 ">
                                     <EditBtn product={product} />
                                     <DeleteBtn product={product} />
                                 </div>

@@ -169,7 +169,7 @@ export default function AddProduct() {
                     background: '#1f2937',
                     color: '#fff'
                 });
-                // setTimeout(() => router.push('/admin/products'), 2000);
+                setTimeout(() => router.push('/dashboard/admin/products'), 2000);
             } else {
                 throw new Error(data.message || 'Failed to save product');
             }
