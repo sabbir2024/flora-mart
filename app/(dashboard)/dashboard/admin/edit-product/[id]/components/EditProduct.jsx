@@ -257,7 +257,7 @@ export default function EditProduct({ product = {} }) {
                                             >
                                                 <option value="">Select Category</option>
                                                 <option>Tech</option>
-                                                <option>Home Decor</option>
+                                                <option>Decor</option>
                                                 <option>Kitchenware</option>
                                                 <option>Lighting</option>
                                                 <option>Furniture</option>

@@ -43,7 +43,7 @@ export default function AddProduct() {
         'Clothing',
         'Baby',
         'Fitness',
-        'Home',
+        'Decor',
         'Tech'
     ];
 
