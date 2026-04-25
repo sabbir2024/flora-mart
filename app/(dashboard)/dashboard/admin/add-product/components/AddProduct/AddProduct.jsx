@@ -48,11 +48,11 @@ export default function AddProduct() {
     ];
 
     const categoryIcons = {
-        'Clothing & Fashion': '👕',
-        'Baby Products': '👶',
+        'Clothing': '👕',
+        'Baby': '👶',
         'Fitness': '💪',
-        'Home & Decor': '🏠',
-        'Tech & Gadgets': '📱'
+        'Decor': '🏠',
+        'Tech': '📱'
     };
 
     const categoryColors = {

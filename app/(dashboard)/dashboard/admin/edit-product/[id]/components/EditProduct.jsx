@@ -255,12 +255,13 @@ export default function EditProduct({ product = {} }) {
                                                 value={formData.category || ""}
                                                 onChange={(e) => handleInputChange("category", e.target.value)}
                                             >
+
                                                 <option value="">Select Category</option>
-                                                <option>Tech</option>
+                                                <option>Clothing</option>
+                                                <option>Baby</option>
+                                                <option>Fitness</option>
                                                 <option>Decor</option>
-                                                <option>Kitchenware</option>
-                                                <option>Lighting</option>
-                                                <option>Furniture</option>
+                                                <option>Tech</option>
                                             </select>
                                         </div>
                                         <div>
