@@ -1,33 +1,154 @@
-"use client"
+"use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
+import Swal from "sweetalert2";
+import RichTextEditor from "../../../add-product/components/RichTextEditor";
+import ImageUploader from "../../../add-product/components/ImageUploader";
+import { apiUrl } from "../../../../../../components/url";
+import { useRouter } from "next/navigation";
 
-export default function EditProduct() {
-    const [formData, setFormData] = React.useState({
-        _id: "69e65e71ef7a5812d8a8faec",
-        productName: "Vyvylabs D04 Mini Portable Desktop Fan with LED light",
-        category: "Tech",
-        brand: "China",
-        description: "<p>Model: D04</p><p>Battery Capacity: 1800mAh</p><p>Battery Life: Approx. 1-7 hours</p><p>Material: ABS</p><p>3-Adjustable Speed, Built-in LED l</p><p>ightMaterial: ABS</p><p>Input: 5V-1A (Type-C)</p><p>Power Consumption: 6.5W</p><p>Battery Capacity: 1800mAh</p><p>Battery Life: 1-7 hours</p><p>Speed Settings: 3 Gears</p>",
-        basePrice: 2290,
-        comparePrice: 4500,
-        sku: "fan",
-        quantity: 100,
-        isVisible: true,
-        isPreorder: false,
-        weight: 1.2,
-        tags: [],
-        images: [
-            "https://i.ibb.co/TCpNfrW/image-1.jpg",
-            "https://i.ibb.co/7tZ5vjqQ/image-3.jpg"
-        ],
-        primaryImage: "https://i.ibb.co/TCpNfrW/image-1.jpg",
-        createdAt: "2026-04-20T17:12:16.388Z"
-    });
+export default function EditProduct({ product = {} }) {
+    const [formData, setFormData] = useState(product);
+    const [loading, setLoading] = useState(false);
+    const [descriptionHtml, setDescriptionHtml] = useState(product.description || "");
+    const [images, setImages] = useState([]);
+    const [previewImage, setPreviewImage] = useState(product.primaryImage || null);
+    const [errors, setErrors] = useState({});
 
-    const handleSave = () => {
-        console.log("Product updated:", formData);
-        console.log("Product updated via FAB!");
+    const router = useRouter();
+
+    // Initialize images from product data on component mount
+    useEffect(() => {
+        if (product.images && product.images.length > 0) {
+            const existingImages = product.images.map((img, index) => ({
+                id: `existing-${index}`,
+                preview: img,
+                uploadedUrl: img,
+                name: `image-${index}`,
+                size: 0,
+                type: 'image/jpeg',
+                isExisting: true
+            }));
+            setImages(existingImages);
+        }
+        if (product.primaryImage) {
+            setPreviewImage(product.primaryImage);
+        }
+        if (product.description) {
+            setDescriptionHtml(product.description);
+        }
+    }, [product]);
+
+    const handleSave = async () => {
+        setLoading(true);
+
+        // Prepare final data - only include fields that have changed
+        const finalData = {
+            productName: formData.productName,
+            category: formData.category,
+            brand: formData.brand,
+            description: descriptionHtml,
+            basePrice: formData.basePrice,
+            comparePrice: formData.comparePrice,
+            sku: formData.sku,
+            quantity: formData.quantity,
+            isVisible: formData.isVisible,
+            isPreorder: formData.isPreorder,
+            weight: formData.weight,
+            tags: formData.tags || [],
+            images: images.map(img => img.uploadedUrl || img.preview),
+            primaryImage: previewImage
+        };
+
+        try {
+            const response = await fetch(`${apiUrl}/products/${formData._id}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(finalData),
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                // Show success message
+                Swal.fire({
+                    title: "Success!",
+                    text: "Product updated successfully",
+                    icon: "success",
+                    confirmButtonColor: "#a63400",
+                    timer: 2000,
+                    showConfirmButton: true
+                });
+                router.push("/dashboard/admin/products");
+            } else {
+                // Show error message
+                Swal.fire({
+                    title: "Error!",
+                    text: result.error || "Failed to update product",
+                    icon: "error",
+                    confirmButtonColor: "#a63400"
+                });
+                console.error("Update failed:", result.error);
+            }
+        } catch (error) {
+            // Show network error message
+            Swal.fire({
+                title: "Network Error!",
+                text: "Failed to connect to server. Please try again.",
+                icon: "error",
+                confirmButtonColor: "#a63400"
+            });
+            console.error("Error updating product:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDiscard = async () => {
+        const result = await Swal.fire({
+            title: "Discard Changes?",
+            text: "You have unsaved changes. Are you sure you want to discard them?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#a63400",
+            cancelButtonColor: "#757778",
+            confirmButtonText: "Yes, discard",
+            cancelButtonText: "Cancel"
+        });
+
+        if (result.isConfirmed) {
+            // Reset to original product data
+            setFormData(product);
+            setDescriptionHtml(product.description || "");
+            setPreviewImage(product.primaryImage || null);
+
+            // Reset images
+            if (product.images && product.images.length > 0) {
+                const existingImages = product.images.map((img, index) => ({
+                    id: `existing-${index}`,
+                    preview: img,
+                    uploadedUrl: img,
+                    name: `image-${index}`,
+                    size: 0,
+                    type: 'image/jpeg',
+                    isExisting: true
+                }));
+                setImages(existingImages);
+            } else {
+                setImages([]);
+            }
+
+            Swal.fire({
+                title: "Discarded!",
+                text: "Your changes have been discarded",
+                icon: "info",
+                confirmButtonColor: "#a63400",
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
     };
 
     const handleInputChange = (field, value) => {
@@ -40,45 +161,64 @@ export default function EditProduct() {
     const handleQuantityChange = (delta) => {
         setFormData(prev => ({
             ...prev,
-            quantity: Math.max(0, prev.quantity + delta)
+            quantity: Math.max(0, (prev.quantity || 0) + delta)
         }));
     };
 
-    const handleImageRemove = (indexToRemove) => {
-        setFormData(prev => ({
-            ...prev,
-            images: prev.images.filter((_, index) => index !== indexToRemove)
-        }));
+    const handleImagesChange = (action) => {
+        if (action.type === 'add') {
+            setImages(prev => [...prev, ...action.images]);
+            if (!previewImage && action.images.length > 0) {
+                setPreviewImage(action.images[0].preview);
+            }
+        } else if (action.type === 'remove') {
+            setImages(prev => {
+                const filtered = prev.filter(img => img.id !== action.imageId);
+                const removedImage = prev.find(img => img.id === action.imageId);
+                if (removedImage?.preview === previewImage && filtered.length > 0) {
+                    setPreviewImage(filtered[0].preview);
+                } else if (filtered.length === 0) {
+                    setPreviewImage(null);
+                }
+                return filtered;
+            });
+        } else if (action.type === 'error') {
+            setErrors(prev => ({ ...prev, images: action.message }));
+        } else if (action.type === 'clearError') {
+            setErrors(prev => ({ ...prev, images: '' }));
+        }
     };
 
-    const handlePrimaryImageChange = (imageUrl) => {
-        setFormData(prev => ({
-            ...prev,
-            primaryImage: imageUrl
-        }));
+    const handleSetPrimary = (imageUrl) => {
+        setPreviewImage(imageUrl);
     };
 
     return (
         <>
             {/* Main Content Area */}
             <main className="">
-
                 <div className="p-8 max-w-7xl mx-auto">
                     {/* Header Section */}
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
                         <div>
                             <h2 className="text-4xl font-black tracking-tight text-on-surface mb-2">Edit Catalog Item</h2>
-                            <p className="text-on-surface-variant/70 font-medium">Last updated: {new Date(formData.createdAt).toLocaleString()}</p>
+                            <p className="text-on-surface-variant/70 font-medium">
+                                Last updated: {formData.createdAt ? new Date(formData.createdAt).toLocaleString() : "N/A"}
+                            </p>
                         </div>
                         <div className="flex items-center gap-4">
-                            <button className="px-8 py-3.5 text-on-surface font-bold bg-surface-container-high rounded-2xl hover:bg-surface-container-highest transition-all duration-300">
+                            <button
+                                onClick={handleDiscard}
+                                className="px-8 py-3.5 text-on-surface font-bold bg-surface-container-high rounded-2xl hover:bg-surface-container-highest transition-all duration-300"
+                            >
                                 Discard
                             </button>
                             <button
                                 onClick={handleSave}
-                                className="px-8 py-3.5 bg-gradient-to-br from-primary to-primary-container text-white font-bold rounded-2xl shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
+                                disabled={loading}
+                                className="px-8 py-3.5 bg-linear-to-br from-primary to-primary-container text-white font-bold rounded-2xl shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                Update Product
+                                {loading ? "Updating..." : "Update Product"}
                             </button>
                         </div>
                     </div>
@@ -95,56 +235,52 @@ export default function EditProduct() {
                                 </div>
                                 <div className="space-y-6">
                                     <div>
-                                        <label className="block text-[11px] font-bold text-on-surface-variant/60 uppercase tracking-[0.1em] mb-2">Product Title</label>
+                                        <label className="block text-[11px] font-bold text-on-surface-variant/60 uppercase tracking-widest mb-2">
+                                            Product Title
+                                        </label>
                                         <input
                                             className="w-full bg-surface-container-highest/50 border-none rounded-xl px-4 py-4 text-on-surface font-semibold focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all"
                                             type="text"
-                                            value={formData.productName}
-                                            onChange={(e) => handleInputChange('productName', e.target.value)}
+                                            value={formData.productName || ""}
+                                            onChange={(e) => handleInputChange("productName", e.target.value)}
                                         />
                                     </div>
                                     <div className="grid grid-cols-2 gap-6">
                                         <div>
-                                            <label className="block text-[11px] font-bold text-on-surface-variant/60 uppercase tracking-[0.1em] mb-2">Category</label>
+                                            <label className="block text-[11px] font-bold text-on-surface-variant/60 uppercase tracking-widest mb-2">
+                                                Category
+                                            </label>
                                             <select
                                                 className="w-full bg-surface-container-highest/50 border-none rounded-xl px-4 py-4 text-on-surface font-semibold focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all appearance-none"
-                                                value={formData.category}
-                                                onChange={(e) => handleInputChange('category', e.target.value)}
+                                                value={formData.category || ""}
+                                                onChange={(e) => handleInputChange("category", e.target.value)}
                                             >
+                                                <option value="">Select Category</option>
                                                 <option>Tech</option>
                                                 <option>Home Decor</option>
                                                 <option>Kitchenware</option>
                                                 <option>Lighting</option>
+                                                <option>Furniture</option>
                                             </select>
                                         </div>
                                         <div>
-                                            <label className="block text-[11px] font-bold text-on-surface-variant/60 uppercase tracking-[0.1em] mb-2">Brand</label>
+                                            <label className="block text-[11px] font-bold text-on-surface-variant/60 uppercase tracking-widest mb-2">
+                                                Brand
+                                            </label>
                                             <input
                                                 className="w-full bg-surface-container-highest/50 border-none rounded-xl px-4 py-4 text-on-surface font-semibold focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all"
                                                 type="text"
-                                                value={formData.brand}
-                                                onChange={(e) => handleInputChange('brand', e.target.value)}
+                                                value={formData.brand || ""}
+                                                onChange={(e) => handleInputChange("brand", e.target.value)}
                                             />
                                         </div>
                                     </div>
-                                    <div>
-                                        <label className="block text-[11px] font-bold text-on-surface-variant/60 uppercase tracking-[0.1em] mb-2">Description</label>
-                                        <div className="bg-surface-container-highest/50 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-primary/20 focus-within:bg-white transition-all">
-                                            <div className="flex items-center gap-2 p-3 bg-surface-container/30 border-b border-outline-variant/10">
-                                                <button className="p-1.5 hover:bg-white rounded-md transition-colors"><span className="material-symbols-outlined text-lg">format_bold</span></button>
-                                                <button className="p-1.5 hover:bg-white rounded-md transition-colors"><span className="material-symbols-outlined text-lg">format_italic</span></button>
-                                                <button className="p-1.5 hover:bg-white rounded-md transition-colors"><span className="material-symbols-outlined text-lg">format_list_bulleted</span></button>
-                                                <div className="w-px h-4 bg-outline-variant/20 mx-1"></div>
-                                                <button className="p-1.5 hover:bg-white rounded-md transition-colors"><span className="material-symbols-outlined text-lg">link</span></button>
-                                            </div>
-                                            <textarea
-                                                className="w-full bg-transparent border-none focus:ring-0 p-4 text-on-surface leading-relaxed"
-                                                rows={6}
-                                                value={formData.description.replace(/<[^>]*>/g, '')}
-                                                onChange={(e) => handleInputChange('description', e.target.value)}
-                                            ></textarea>
-                                        </div>
-                                    </div>
+
+                                    <RichTextEditor
+                                        value={descriptionHtml}
+                                        onChange={setDescriptionHtml}
+                                        placeholder="Describe the artisan quality and materials..."
+                                    />
                                 </div>
                             </section>
 
@@ -155,38 +291,17 @@ export default function EditProduct() {
                                         <span className="material-symbols-outlined text-primary">image</span>
                                         <h3 className="text-xl font-bold tracking-tight">Media Assets</h3>
                                     </div>
-                                    <span className="text-xs font-bold text-on-surface-variant/40">{formData.images.length} / 5 Slots Used</span>
+                                    <span className="text-xs font-bold text-on-surface-variant/40">
+                                        {images.length} / 5 Slots Used
+                                    </span>
                                 </div>
-                                <div className="grid grid-cols-4 gap-4">
-                                    {formData.images.map((img, idx) => (
-                                        <div key={idx} className={idx === 0 ? "col-span-2 relative group" : "relative group"}>
-                                            <img className="w-full h-64 object-cover rounded-xl shadow-md" alt={`product image ${idx + 1}`} src={img} />
-                                            <div className="absolute top-3 right-3 flex gap-2">
-                                                <button
-                                                    onClick={() => handlePrimaryImageChange(img)}
-                                                    className="w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-primary shadow-sm hover:bg-white transition-colors"
-                                                >
-                                                    <span className="material-symbols-outlined text-sm">star</span>
-                                                </button>
-                                                <button
-                                                    onClick={() => handleImageRemove(idx)}
-                                                    className="w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-error shadow-sm hover:bg-white transition-colors"
-                                                >
-                                                    <span className="material-symbols-outlined text-sm">delete</span>
-                                                </button>
-                                            </div>
-                                            {formData.primaryImage === img && (
-                                                <div className="absolute bottom-3 left-3 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded">Primary</div>
-                                            )}
-                                        </div>
-                                    ))}
-                                    {Array.from({ length: Math.max(0, 5 - formData.images.length) }).map((_, idx) => (
-                                        <button key={`empty-${idx}`} className="h-64 border-2 border-dashed border-outline-variant/30 rounded-xl flex flex-col items-center justify-center gap-2 hover:bg-white/50 hover:border-primary/40 transition-all group">
-                                            <span className="material-symbols-outlined text-on-surface-variant/30 group-hover:text-primary transition-colors">add_photo_alternate</span>
-                                            <span className="text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-widest">Add Image</span>
-                                        </button>
-                                    ))}
-                                </div>
+                                <ImageUploader
+                                    images={images}
+                                    onImagesChange={handleImagesChange}
+                                    previewImage={previewImage}
+                                    onSetPrimary={handleSetPrimary}
+                                    errors={errors}
+                                />
                             </section>
 
                             {/* Pricing & Inventory */}
@@ -197,44 +312,54 @@ export default function EditProduct() {
                                 </div>
                                 <div className="grid grid-cols-3 gap-6">
                                     <div>
-                                        <label className="block text-[11px] font-bold text-on-surface-variant/60 uppercase tracking-[0.1em] mb-2">Price ($)</label>
+                                        <label className="block text-[11px] font-bold text-on-surface-variant/60 uppercase tracking-widest mb-2">
+                                            Price ($)
+                                        </label>
                                         <input
                                             className="w-full bg-surface-container-highest/50 border-none rounded-xl px-4 py-4 text-on-surface font-semibold focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all"
                                             type="number"
-                                            value={formData.basePrice}
-                                            onChange={(e) => handleInputChange('basePrice', parseFloat(e.target.value))}
+                                            value={formData.basePrice || 0}
+                                            onChange={(e) => handleInputChange("basePrice", parseFloat(e.target.value))}
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-[11px] font-bold text-on-surface-variant/60 uppercase tracking-[0.1em] mb-2">Compare at Price</label>
+                                        <label className="block text-[11px] font-bold text-on-surface-variant/60 uppercase tracking-widest mb-2">
+                                            Compare at Price
+                                        </label>
                                         <input
                                             className="w-full bg-surface-container-highest/50 border-none rounded-xl px-4 py-4 text-on-surface font-semibold focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all"
                                             type="number"
-                                            value={formData.comparePrice}
-                                            onChange={(e) => handleInputChange('comparePrice', parseFloat(e.target.value))}
+                                            value={formData.comparePrice || 0}
+                                            onChange={(e) => handleInputChange("comparePrice", parseFloat(e.target.value))}
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-[11px] font-bold text-on-surface-variant/60 uppercase tracking-[0.1em] mb-2">SKU</label>
+                                        <label className="block text-[11px] font-bold text-on-surface-variant/60 uppercase tracking-widest mb-2">
+                                            SKU
+                                        </label>
                                         <input
                                             className="w-full bg-surface-container-highest/50 border-none rounded-xl px-4 py-4 text-on-surface font-semibold focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all"
                                             type="text"
-                                            value={formData.sku}
-                                            onChange={(e) => handleInputChange('sku', e.target.value)}
+                                            value={formData.sku || ""}
+                                            onChange={(e) => handleInputChange("sku", e.target.value)}
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-[11px] font-bold text-on-surface-variant/60 uppercase tracking-[0.1em] mb-2">Weight (kg)</label>
+                                        <label className="block text-[11px] font-bold text-on-surface-variant/60 uppercase tracking-widest mb-2">
+                                            Weight (kg)
+                                        </label>
                                         <input
                                             className="w-full bg-surface-container-highest/50 border-none rounded-xl px-4 py-4 text-on-surface font-semibold focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all"
                                             type="number"
                                             step="0.1"
-                                            value={formData.weight}
-                                            onChange={(e) => handleInputChange('weight', parseFloat(e.target.value))}
+                                            value={formData.weight || 0}
+                                            onChange={(e) => handleInputChange("weight", parseFloat(e.target.value))}
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-[11px] font-bold text-on-surface-variant/60 uppercase tracking-[0.1em] mb-2">Quantity</label>
+                                        <label className="block text-[11px] font-bold text-on-surface-variant/60 uppercase tracking-widest mb-2">
+                                            Quantity
+                                        </label>
                                         <div className="flex items-center bg-surface-container-highest/50 rounded-xl px-2">
                                             <button
                                                 onClick={() => handleQuantityChange(-1)}
@@ -245,7 +370,7 @@ export default function EditProduct() {
                                             <input
                                                 className="w-full bg-transparent border-none text-center font-bold focus:ring-0"
                                                 type="text"
-                                                value={formData.quantity}
+                                                value={formData.quantity || 0}
                                                 readOnly
                                             />
                                             <button
@@ -272,12 +397,12 @@ export default function EditProduct() {
                                         </div>
                                         <label className="relative inline-flex items-center cursor-pointer">
                                             <input
-                                                checked={formData.isVisible}
-                                                onChange={(e) => handleInputChange('isVisible', e.target.checked)}
+                                                checked={formData.isVisible || false}
+                                                onChange={(e) => handleInputChange("isVisible", e.target.checked)}
                                                 className="sr-only peer"
                                                 type="checkbox"
                                             />
-                                            <div className="w-12 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                            <div className="w-12 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                                         </label>
                                     </div>
                                     <div className="flex items-center justify-between">
@@ -287,12 +412,12 @@ export default function EditProduct() {
                                         </div>
                                         <label className="relative inline-flex items-center cursor-pointer">
                                             <input
-                                                checked={formData.isPreorder}
-                                                onChange={(e) => handleInputChange('isPreorder', e.target.checked)}
+                                                checked={formData.isPreorder || false}
+                                                onChange={(e) => handleInputChange("isPreorder", e.target.checked)}
                                                 className="sr-only peer"
                                                 type="checkbox"
                                             />
-                                            <div className="w-12 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                            <div className="w-12 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                                         </label>
                                     </div>
                                     <div className="pt-6 border-t border-outline-variant/10">
@@ -301,9 +426,15 @@ export default function EditProduct() {
                                             <span className="font-bold">SEO Preview</span>
                                         </div>
                                         <div className="p-4 bg-white rounded-xl border border-outline-variant/10">
-                                            <p className="text-blue-600 text-sm font-semibold truncate">solaris-studio.com › products › {formData.sku}</p>
-                                            <h4 className="text-primary-dim text-lg font-bold leading-tight mt-1">{formData.productName} | Solaris Studio</h4>
-                                            <p className="text-on-surface-variant/70 text-xs mt-1 line-clamp-2">{formData.description.replace(/<[^>]*>/g, '').substring(0, 120)}...</p>
+                                            <p className="text-blue-600 text-sm font-semibold truncate">
+                                                solaris-studio.com › products › {formData.sku || "product"}
+                                            </p>
+                                            <h4 className="text-primary-dim text-lg font-bold leading-tight mt-1">
+                                                {formData.productName || "Product Name"} | Solaris Studio
+                                            </h4>
+                                            <p className="text-on-surface-variant/70 text-xs mt-1 line-clamp-2">
+                                                {descriptionHtml.replace(/<[^>]*>/g, "").substring(0, 120)}...
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -316,8 +447,10 @@ export default function EditProduct() {
                                     <span className="font-bold">Tags</span>
                                 </div>
                                 <div className="flex flex-wrap gap-2">
-                                    {formData.tags.map((tag, idx) => (
-                                        <span key={idx} className="px-3 py-1 bg-surface-container-highest rounded-full text-xs font-medium">{tag}</span>
+                                    {(formData.tags || []).map((tag, idx) => (
+                                        <span key={idx} className="px-3 py-1 bg-surface-container-highest rounded-full text-xs font-medium">
+                                            {tag}
+                                        </span>
                                     ))}
                                     <button className="px-3 py-1 border border-dashed border-outline-variant/30 rounded-full text-xs text-on-surface-variant/60 hover:border-primary/40 transition-colors">
                                         + Add Tag
@@ -335,7 +468,8 @@ export default function EditProduct() {
             {/* Contextual FAB for quick update */}
             <button
                 onClick={handleSave}
-                className="fixed bottom-10 right-10 w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center shadow-2xl shadow-primary/40 hover:scale-110 active:scale-95 transition-all duration-300 z-50 md:hidden"
+                disabled={loading}
+                className="fixed bottom-10 right-10 w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center shadow-2xl shadow-primary/40 hover:scale-110 active:scale-95 transition-all duration-300 z-50 md:hidden disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 <span className="material-symbols-outlined text-3xl">done_all</span>
             </button>
